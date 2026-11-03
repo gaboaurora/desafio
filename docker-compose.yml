@@ -1,0 +1,28 @@
+services:
+  postgres_sql_harness:
+    image: postgres:16-alpine
+    container_name: sql_reasoning_postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sql_reasoning_db}
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-harness_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:-harness_admin_secret_2026}
+      LLM_DB_USER: ${LLM_DB_USER:-llm_readonly}
+      LLM_DB_PASSWORD: ${LLM_DB_PASSWORD:-llm_readonly_secret_2026}
+      LLM_STATEMENT_TIMEOUT_MS: ${LLM_STATEMENT_TIMEOUT_MS:-3000}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pg_sql_harness_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pg_sql_harness_data:
+    name: sql_reasoning_pgdata
