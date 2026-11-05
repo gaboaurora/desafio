@@ -2,6 +2,9 @@
 .venv/
 __pycache__/
 *.pyc
+.pytest_cache/
 pgdata/
-results/
-data/
+
+# Salidas de experimentos (trazas, baselines, SFT/DPO). Se conserva la carpeta.
+outputs/*
+!outputs/.gitkeep
