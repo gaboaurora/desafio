@@ -15,9 +15,21 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
+
+from generator.schema_generator import build_schema, to_prompt_description
+from harness.parser import parse_completion
+from harness.prompt_builder import (
+    build_prompt,
+    build_system_prompt,
+    build_tool_observation,
+    build_user_prompt,
+)
+from harness.sql_executor import SQLExecutor
+from harness.verifier import verify
 
 load_dotenv()
 
@@ -61,12 +73,36 @@ class Episode:
 class SQLEnvironment:
     """Orquesta la interacción modelo <-> herramienta SQL para una tarea."""
 
-    def __init__(self, max_tool_turns: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        max_tool_turns: Optional[int] = None,
+        schema_description: Optional[str] = None,
+        db_dir: str = "db",
+    ) -> None:
         self.max_tool_turns = max_tool_turns or int(os.getenv("MAX_TOOL_TURNS", "2"))
+        self.db_dir = Path(db_dir)
+        self.schema_description = schema_description or to_prompt_description(build_schema())
+
+        self.current_task: Optional[Task] = None
+        self.tool_turns_used: int = 0
+        self.messages: List[Dict[str, str]] = []
+        self.last_final_answer: Optional[str] = None
 
     def reset(self, task: Task) -> str:
         """Inicia un episodio para `task` y devuelve el prompt inicial."""
-        raise NotImplementedError
+        self.current_task = task
+        self.tool_turns_used = 0
+        self.last_final_answer = None
+
+        system_content = build_system_prompt(self.schema_description)
+        user_content = build_user_prompt(task.id, task.question)
+
+        self.messages = [
+            {"role": "system", "content": system_content},
+            {"role": "user", "content": user_content},
+        ]
+
+        return build_prompt(task.id, task.question, self.schema_description)
 
     def step(self, completion: str) -> Tuple[str, bool]:
         """
@@ -76,8 +112,94 @@ class SQLEnvironment:
             (observation, done): si la completion contiene <sql>, `observation` es el
             resultado de la consulta y `done=False`; si contiene <answer>, `done=True`.
         """
-        raise NotImplementedError
+        if self.current_task is None:
+            raise RuntimeError("Debe llamar a reset(task) antes de step().")
+
+        self.messages.append({"role": "assistant", "content": completion})
+        parsed = parse_completion(completion)
+
+        # 1. Si emitió una respuesta final, el episodio termina
+        if parsed.has_answer:
+            self.last_final_answer = parsed.final_answer
+            return ("", True)
+
+        # 2. Si emitió consulta SQL y aún tiene turnos permitidos
+        if parsed.sql_queries:
+            self.tool_turns_used += 1
+            query = parsed.sql_queries[-1]
+
+            db_path = self.db_dir / self.current_task.database
+            executor = SQLExecutor(db_path=str(db_path))
+            exec_result = executor.execute(query)
+            formatted = executor.format_result(exec_result)
+
+            observation = build_tool_observation(formatted, error=exec_result.error)
+            self.messages.append({"role": "user", "content": observation})
+
+            done = self.tool_turns_used >= self.max_tool_turns
+            return (observation, done)
+
+        # 3. Si no emitió ni SQL ni answer (o formato inválido)
+        done = self.tool_turns_used >= self.max_tool_turns
+        obs = build_tool_observation("", error="No se detectó <sql> ni <answer> válido.")
+        self.messages.append({"role": "user", "content": obs})
+        return (obs, done)
 
     def run_episode(self, task: Task, policy: Callable[[List[Dict[str, str]]], str]) -> Episode:
         """Ejecuta el ciclo completo usando `policy(messages) -> completion`."""
-        raise NotImplementedError
+        init_prompt = self.reset(task)
+        done = False
+
+        while not done:
+            completion = policy(self.messages)
+            _, done = self.step(completion)
+
+        reward_val = 0.0
+        if self.last_final_answer is not None:
+            ver = verify(
+                prediction=self.last_final_answer,
+                target=task.expected_result,
+                answer_type=task.answer_type,
+                ordered=task.ordered,
+            )
+            reward_val = 1.0 if ver.is_correct else 0.0
+
+        return Episode(
+            task_id=task.id,
+            prompt=init_prompt,
+            turns=list(self.messages),
+            final_answer=self.last_final_answer,
+            reward=reward_val,
+        )
+
+
+if __name__ == "__main__":
+    env = SQLEnvironment(max_tool_turns=2)
+    task = Task(
+        id="hosp_0421",
+        database="hospital.sqlite",
+        difficulty="easy",
+        template_id="template_01",
+        features=["join"],
+        question="¿Cuál es el nombre del departamento del piso 1?",
+        gold_sql="SELECT name FROM departments WHERE floor = 1 LIMIT 1;",
+        answer_type="text",
+        ordered=False,
+        result_columns=["name"],
+        expected_result="Urgencias",
+    )
+
+    prompt = env.reset(task)
+    print("Prompt inicial generado con éxito!")
+
+    print(prompt)
+
+    def mock_policy(msgs: List[Dict[str, str]]) -> str:
+        last = msgs[-1]["content"]
+        if "<result>" in last:
+            return "<answer>Urgencias</answer>"
+        return "<sql>SELECT name FROM departments WHERE floor = 1 LIMIT 1;</sql>"
+
+    ep = env.run_episode(task, mock_policy)
+    print(f"Episodio ejecutado. Final answer: {ep.final_answer}, Reward: {ep.reward}")
+    print(f"Total de turnos: {len(ep.turns)}")
