@@ -28,7 +28,7 @@ from harness.prompt_builder import (
     build_tool_observation,
     build_user_prompt,
 )
-from harness.sql_executor import SQLExecutor
+from harness.sql_executor import SQLExecutor, SQLResult
 from harness.verifier import verify
 
 load_dotenv()
@@ -85,14 +85,18 @@ class SQLEnvironment:
 
         self.current_task: Optional[Task] = None
         self.tool_turns_used: int = 0
+        self.total_turns: int = 0
         self.messages: List[Dict[str, str]] = []
         self.last_final_answer: Optional[str] = None
+        self.last_sql_result: Optional[SQLResult] = None
 
     def reset(self, task: Task) -> str:
         """Inicia un episodio para `task` y devuelve el prompt inicial."""
         self.current_task = task
         self.tool_turns_used = 0
+        self.total_turns = 0
         self.last_final_answer = None
+        self.last_sql_result = None
 
         system_content = build_system_prompt(self.schema_description)
         user_content = build_user_prompt(task.id, task.question)
@@ -105,48 +109,74 @@ class SQLEnvironment:
         return build_prompt(task.id, task.question, self.schema_description)
 
     def step(self, completion: str) -> Tuple[str, bool]:
-        """
-        Procesa una completion del modelo.
+        """Procesa una completion del modelo.
 
-        Returns:
-            (observation, done): si la completion contiene <sql>, `observation` es el
-            resultado de la consulta y `done=False`; si contiene <answer>, `done=True`.
+        Permite hasta `max_tool_turns` ejecuciones de <sql>, dejando siempre un
+        turno posterior para que el modelo emita <answer> a partir del último
+        <result>.
         """
         if self.current_task is None:
             raise RuntimeError("Debe llamar a reset(task) antes de step().")
 
+        self.total_turns += 1
+        max_total_turns = self.max_tool_turns * 2 + 2
+
         self.messages.append({"role": "assistant", "content": completion})
         parsed = parse_completion(completion)
 
-        # 1. Si emitió una respuesta final, el episodio termina
-        if parsed.has_answer:
+        # 0. Si las etiquetas están mal formadas, pedir corrección sin usar literales <sql>/<answer>
+        if not parsed.is_valid:
+            done = self.total_turns >= max_total_turns
+            obs = build_tool_observation(
+                "",
+                error="Etiquetas mal formadas. Emite únicamente un bloque sql o un bloque answer bien cerrado.",
+            )
+            self.messages.append({"role": "user", "content": obs})
+            return (obs, done)
+
+        # 1. Si emitió <answer> (y NO emitió <sql> en el mismo turno), termina el episodio
+        if parsed.has_answer and not parsed.sql_queries:
             self.last_final_answer = parsed.final_answer
             return ("", True)
 
-        # 2. Si emitió consulta SQL y aún tiene turnos permitidos
+        # 2. Si emitió consulta SQL
         if parsed.sql_queries:
+            if self.tool_turns_used >= self.max_tool_turns:
+                done = self.total_turns >= max_total_turns
+                obs = build_tool_observation(
+                    "",
+                    error="Límite de consultas SQL alcanzado. Emite ahora tu respuesta final dentro de la etiqueta answer.",
+                )
+                self.messages.append({"role": "user", "content": obs})
+                return (obs, done)
+
             self.tool_turns_used += 1
             query = parsed.sql_queries[-1]
 
             db_path = self.db_dir / self.current_task.database
             executor = SQLExecutor(db_path=str(db_path))
             exec_result = executor.execute(query)
+            self.last_sql_result = exec_result
             formatted = executor.format_result(exec_result)
 
             observation = build_tool_observation(formatted, error=exec_result.error)
             self.messages.append({"role": "user", "content": observation})
 
-            done = self.tool_turns_used >= self.max_tool_turns
-            return (observation, done)
+            return (observation, False)
 
-        # 3. Si no emitió ni SQL ni answer (o formato inválido)
-        done = self.tool_turns_used >= self.max_tool_turns
-        obs = build_tool_observation("", error="No se detectó <sql> ni <answer> válido.")
+        # 3. Si no emitió ni <sql> ni <answer> válido
+        done = self.total_turns >= max_total_turns
+        obs = build_tool_observation(
+            "",
+            error="No se detectó bloque sql ni answer válido. Emite una consulta con la etiqueta sql o tu respuesta final con la etiqueta answer.",
+        )
         self.messages.append({"role": "user", "content": obs})
         return (obs, done)
 
     def run_episode(self, task: Task, policy: Callable[[List[Dict[str, str]]], str]) -> Episode:
         """Ejecuta el ciclo completo usando `policy(messages) -> completion`."""
+        from harness.reward import _is_coherent
+
         init_prompt = self.reset(task)
         done = False
 
@@ -155,14 +185,19 @@ class SQLEnvironment:
             _, done = self.step(completion)
 
         reward_val = 0.0
-        if self.last_final_answer is not None:
+        if (
+            self.last_final_answer is not None
+            and self.last_sql_result is not None
+            and self.last_sql_result.ok
+        ):
             ver = verify(
                 prediction=self.last_final_answer,
                 target=task.expected_result,
                 answer_type=task.answer_type,
                 ordered=task.ordered,
             )
-            reward_val = 1.0 if ver.is_correct else 0.0
+            if ver.is_correct and _is_coherent(self.last_final_answer, self.last_sql_result, task):
+                reward_val = 1.0
 
         return Episode(
             task_id=task.id,
@@ -191,7 +226,6 @@ if __name__ == "__main__":
 
     prompt = env.reset(task)
     print("Prompt inicial generado con éxito!")
-
     print(prompt)
 
     def mock_policy(msgs: List[Dict[str, str]]) -> str:

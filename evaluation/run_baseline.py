@@ -114,7 +114,7 @@ class OllamaPolicy:
             self.options["seed"] = seed
         if stop_after_sql:
             # Al cerrar </sql> el modelo debe esperar la observación del harness, no inventarla.
-            self.options["stop"] = ["</sql>"]
+            self.options["stop"] = ["</sql>", "</SQL>"]
 
     def with_seed(self, seed: int) -> "OllamaPolicy":
         clone = object.__new__(OllamaPolicy)
@@ -150,10 +150,13 @@ def _message_content(response: Any) -> str:
 
 def _close_sql_tag(text: str) -> str:
     """La parada en '</sql>' no incluye la etiqueta: se repone si quedó un <sql> abierto."""
-    opened = [m.start() for m in re.finditer(r"<\s*sql\s*>", text, re.IGNORECASE)]
-    closed = [m.start() for m in re.finditer(r"<\s*/\s*sql\s*>", text, re.IGNORECASE)]
+    cleaned = re.sub(r"<\s*think\s*>.*?<\s*/\s*think\s*>", "", text, flags=re.IGNORECASE | re.DOTALL)
+    opened = [m.start() for m in re.finditer(r"<\s*sql\s*>", cleaned, re.IGNORECASE)]
+    closed = [m.start() for m in re.finditer(r"<\s*/\s*sql\s*>", cleaned, re.IGNORECASE)]
+    ans_tags = [m.start() for m in re.finditer(r"<\s*/?\s*answer\s*>", cleaned, re.IGNORECASE)]
     if opened and (not closed or closed[-1] < opened[-1]):
-        return text + "</sql>"
+        if not ans_tags or ans_tags[-1] < opened[-1]:
+            return text + "</sql>"
     return text
 
 

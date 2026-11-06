@@ -12,35 +12,62 @@ El prompt incluye:
 
 from __future__ import annotations
 
-from typing import Optional
-
 import re
-
-
-
-
+from typing import Optional
 
 TASK_ID_TAG = "[TASK_ID: {task_id}]"
 TASK_ID_PATTERN = re.compile(r"\[TASK_ID:\s*(.*?)\s*\]")
 
+
 def build_system_prompt(schema_description: str) -> str:
     """Instrucciones generales + esquema. Se mantiene estable entre tareas del mismo esquema."""
     instructions = (
-        "Eres un asistente experto en bases de datos relacionales SQLite para un entorno hospitalario.\n"
-        "Tu objetivo es responder con precisión a la pregunta del usuario consultando la base de datos.\n\n"
-        "### Protocolo de Interacción y Formato:\n"
-        "1. Razonamiento (<think> ... </think>):\n"
-        "   - Antes de realizar una consulta o de emitir tu respuesta final, analiza el problema paso a paso dentro de <think> ... </think>.\n"
-        "   - Identifica las tablas involucradas, condiciones WHERE, JOINs, agregaciones o cálculos de fechas (p. ej., julianday).\n"
-        "   - Al recibir el resultado de la base de datos (<result>), evalúa si los datos responden la pregunta o si debes ajustar tu estrategia.\n\n"
-        "2. Consulta SQL (<sql> ... </sql>):\n"
-        "   - Cuando necesites información, emite una única consulta SELECT entre etiquetas <sql> ... </sql>.\n"
-        "   - La base de datos es SQLite (solo lectura). No uses comandos destructivos ni múltiples sentencias separadas por ';'.\n"
-        "   - El sistema ejecutará tu consulta y te responderá con <result> ... </result>.\n\n"
-        "3. Respuesta Final (<answer> ... </answer>):\n"
-        "   - Una vez que tengas los datos necesarios para responder, emite exactamente una respuesta dentro de <answer> ... </answer>.\n"
-        "   - Sé directo y conciso: incluye solo el dato pedido (número, texto, booleano, lista o tabla) según corresponda.\n"
-        "   - No inventes resultados: tu respuesta final debe estar respaldada por los datos obtenidos."
+        "Eres un agente experto en bases de datos SQLite para un entorno hospitalario.\n"
+        "Tu objetivo es responder con exactitud a la pregunta del usuario consultando la base de datos.\n\n"
+        "### PROTOCOLO DE INTERACCIÓN POR TURNO:\n"
+        "- Si necesitas consultar la base de datos (o corregir una consulta anterior): emite un bloque "
+        "<sql>SELECT ...</sql> y detén tu respuesta inmediatamente para esperar el bloque <result>...</result> del sistema.\n"
+        "- Si ya recibiste un <result>...</result> válido con los datos que responden la pregunta: emite un único bloque "
+        "<answer>...</answer> con el dato final y termina.\n"
+        "- Opcionalmente puedes razonar brevemente antes dentro de <think>...</think>.\n"
+        "- PROHIBIDO incluir <sql> y <answer> en el mismo turno.\n"
+        "- PROHIBIDO inventar bloques <result>...</result>.\n\n"
+        "### REGLAS DE SQLITE Y CORRECCIÓN DE ERRORES:\n"
+        "1. <sql>...</sql>:\n"
+        "   - Escribe UNA ÚNICA sentencia SELECT válida para SQLite (solo lectura), sin bloques markdown.\n"
+        "   - Fechas en SQLite: NO existen YEAR() ni MONTH(). Usa `strftime('%Y', columna) = '2025'`, "
+        "`strftime('%Y-%m', columna) = '2025-05'`, o comparaciones ISO como `hire_date >= '2016-01-01'` "
+        "('a partir de 2016' o 'desde 2016' significa `>= '2016-01-01'`, NO `LIKE '2016%'`).\n"
+        "   - JOINs y alias: usa siempre alias distintos para cada tabla (ej. `departments dp JOIN doctors d ON dp.department_id = d.department_id`; "
+        "NUNCA uses el mismo alias `d` para dos tablas).\n"
+        "   - Si recibes `<result>ERROR: ...</result>`, NO emitas `<answer>`. Corrige el error de SQL y emite un nuevo `<sql>...</sql>`.\n\n"
+        "2. <answer>...</answer>:\n"
+        "   - Emite `<answer>` SOLO cuando tengas el resultado de la consulta.\n"
+        "   - Incluye únicamente el dato solicitado, sin explicaciones adicionales ni encabezados de columna:\n"
+        "     * Preguntas de Sí/No (¿Existe...?, ¿Hay...?, ¿Es...?, Responde sí o no): responde exactamente `Sí` o `No` (ej. `<answer>Sí</answer>`).\n"
+        "     * Número o texto: solo el valor (ej. `<answer>150</answer>` o `<answer>Urgencias</answer>`).\n"
+        "     * Lista (una columna, varias filas): valores separados por coma o uno por línea.\n"
+        "     * Tabla (dos o más columnas): una fila por línea separando las columnas con ` | ` (ej. `Pediatría | 6`).\n\n"
+        "### EJEMPLO 1 (Consulta directa):\n"
+        "Turno 1 (Asistente):\n"
+        "<think>Contaré los pacientes de Talca con Fonasa en la tabla patients.</think>\n"
+        "<sql>SELECT COUNT(*) FROM patients WHERE city = 'Talca' AND insurance = 'Fonasa'</sql>\n\n"
+        "Turno del Sistema:\n"
+        "<result>COUNT(*)\n18</result>\n\n"
+        "Turno 2 (Asistente):\n"
+        "<answer>18</answer>\n\n"
+        "### EJEMPLO 2 (Corrección de error SQL y respuesta de tabla):\n"
+        "Turno 1 (Asistente):\n"
+        "<sql>SELECT d.name, COUNT(*) FROM departments d JOIN doctors d ON d.department_id = d.department_id GROUP BY d.name</sql>\n\n"
+        "Turno del Sistema:\n"
+        "<result>ERROR: ambiguous column name: d.department_id</result>\n\n"
+        "Turno 2 (Asistente):\n"
+        "<think>Usé el mismo alias d en ambas tablas. Usaré dp para departments y d para doctors.</think>\n"
+        "<sql>SELECT dp.name, COUNT(*) FROM departments dp JOIN doctors d ON dp.department_id = d.department_id GROUP BY dp.name</sql>\n\n"
+        "Turno del Sistema:\n"
+        "<result>name | COUNT(*)\nCardiología | 6\nPediatría | 5</result>\n\n"
+        "Turno 3 (Asistente):\n"
+        "<answer>Cardiología | 6\nPediatría | 5</answer>"
     )
     return f"{instructions}\n\n### Esquema de la Base de Datos:\n{schema_description}"
 
@@ -60,9 +87,8 @@ def build_prompt(task_id: str, question: str, schema_description: str) -> str:
 def build_tool_observation(result_text: str, error: Optional[str] = None) -> str:
     """Envuelve el resultado (o error) de la herramienta SQL en <result>...</result>."""
     if error:
-        return f"<result><error>{error}</error></result>"
-    else:
-        return f"<result>{result_text}</result>"
+        return f"<result>ERROR: {error}</result>"
+    return f"<result>{result_text}</result>"
 
 
 def extract_task_id(prompt: str) -> Optional[str]:
@@ -71,25 +97,12 @@ def extract_task_id(prompt: str) -> Optional[str]:
     return match.group(1) if match else None
 
 
-# Testear archivo
-
 if __name__ == "__main__":
-    # Ejemplo de construcción de prompt
     schema_desc = "Tabla users(id INT, name TEXT, age INT)"
     task_id = "hosp_0001"
     question = "¿Cuál es la edad promedio de los usuarios?"
     prompt = build_prompt(task_id, question, schema_desc)
     print("Prompt completo:\n", prompt)
-
-    # Ejemplo de extracción de task_id
-    extracted_id = extract_task_id(prompt)
-    print("Task ID extraído:", extracted_id)
-
-    # Ejemplo de construcción de observación de herramienta
-    result_text = "Resultado de la consulta SQL"
-    observation = build_tool_observation(result_text)
-    print("Observación de herramienta:\n", observation)
-
-    error_message = "Error en la consulta SQL"
-    error_observation = build_tool_observation(result_text="", error=error_message)
-    print("Observación de herramienta con error:\n", error_observation)
+    print("Task ID extraído:", extract_task_id(prompt))
+    print("Observación de herramienta:\n", build_tool_observation("age\n42"))
+    print("Observación de herramienta con error:\n", build_tool_observation("", error="Error en la consulta SQL"))

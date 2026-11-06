@@ -17,16 +17,20 @@ experimentos del proyecto de curso; la versión final reportada debe ser la bina
 """
 
 from __future__ import annotations
+
 import json
-import re
+from pathlib import Path
+from typing import Any, Dict, Optional
 
-from typing import Dict, Optional
+from harness.environment import Task
+from harness.parser import parse_completion
+from harness.prompt_builder import extract_task_id
+from harness.sql_executor import SQLResult, SQLExecutor
+from harness.verifier import _ANSWER_ALIASES, _parse_bool, verify
 
-from environment import Task
-from parser import parse_completion
-from prompt_builder import extract_task_id
-from verifier import verify
-from sql_executor import SQLExecutor
+ROOT = Path(__file__).resolve().parent.parent
+DATASET_DIR = ROOT / "dataset"
+DB_DIR = ROOT / "db"
 
 _TASK_REGISTRY: Dict[str, Task] = {}
 
@@ -34,76 +38,147 @@ _TASK_REGISTRY: Dict[str, Task] = {}
 def load_task_registry(*jsonl_paths: str) -> int:
     """Carga tareas desde archivos JSONL al registro global. Devuelve cuántas tareas hay."""
     for path in jsonl_paths:
-        for line in open(path, 'r', encoding='utf-8'):
-            task = Task.from_dict(json.loads(line))
-            if task.id in _TASK_REGISTRY:
-                print(f"CUIDADO: La tarea {task.id} fue reescrita.")
-            _TASK_REGISTRY[task.id] = task
+        p = Path(path)
+        if not p.exists():
+            continue
+        with p.open("r", encoding="utf-8") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                task = Task.from_dict(json.loads(line))
+                _TASK_REGISTRY[task.id] = task
     return len(_TASK_REGISTRY)
 
+
+def _ensure_registry_loaded() -> None:
+    if not _TASK_REGISTRY:
+        default_paths = [str(DATASET_DIR / f"{split}.jsonl") for split in ("train", "eval", "test")]
+        load_task_registry(*default_paths)
+
+
 def get_task(task_id: str) -> Optional[Task]:
+    if not task_id:
+        return None
+    if task_id not in _TASK_REGISTRY:
+        _ensure_registry_loaded()
     return _TASK_REGISTRY.get(task_id)
 
 
 def reward(prompt: str, completion: str) -> float:
     """Recompensa binaria: 1.0 si la respuesta final es correcta y la completion es válida."""
-    # Se busca la tarea en la base de datos
+    if not isinstance(prompt, str) or not isinstance(completion, str):
+        return 0.0
     task_id = extract_task_id(prompt)
+    if not task_id:
+        return 0.0
     task = get_task(task_id)
-    if task is None: 
-        raise AttributeError("La tarea pedida no se encuentra en la base de datos.")
-    parsed_completion = parse_completion(completion)
-    if not parsed_completion.is_valid: return 0.0 # Completion no es válida
-    # Se compara el resultado de las queries de sql con el valor entregado por el modelo
-    executor = SQLExecutor()
-    queries = parsed_completion.sql_queries
-    if len(queries) == 0: return 0.0 # No hay query
-    real_value = executor.execute(queries[-1])
-    # Si hay errores en la ejecución del SQL
-    if not real_value.ok: return 0.0
-    clean_value = process_type_sql(task.answer_type, real_value)
-    coherence = verify(parsed_completion.final_answer, clean_value, task.answer_type)
-    # Si el resultado de la query no es correcto, no hay puntaje
-    if not coherence.is_correct: return 0.0
-    # Se ejecuta el gold_sql para encontrar el target
-    target = process_type_sql(task.answer_type, executor.execute(task.gold_sql))
-    # Se verifica que la respuesta sea correcta
-    result = verify(parsed_completion.final_answer, target, task.answer_type)
-    if result.is_correct:
-        return 1.0
-    return 0.0
+    if task is None:
+        return 0.0
 
-"""Procesa información extraída de la consulta sql"""
-def process_type_sql(answer_type, sql_result):
+    parsed = parse_completion(completion)
+    if not parsed.is_valid or not parsed.has_answer or not parsed.sql_queries:
+        return 0.0
+
+    # 1. Verificar que la respuesta final coincida con el ground truth de la tarea
+    ver = verify(
+        parsed.final_answer,
+        task.expected_result,
+        task.answer_type,
+        ordered=task.ordered,
+    )
+    if not ver.is_correct:
+        return 0.0
+
+    # 2. Re-ejecutar la última consulta SQL del modelo y verificar coherencia con su respuesta
+    executor = SQLExecutor(DB_DIR / task.database)
+    real_value = executor.execute(parsed.sql_queries[-1])
+    if not real_value.ok:
+        return 0.0
+
+    if not _is_coherent(parsed.final_answer, real_value, task):
+        return 0.0
+
+    return 1.0
+
+
+def process_type_sql(answer_type: str, sql_result: SQLResult) -> Any:
+    """Extrae el valor tipado principal desde el resultado SQL según `answer_type`."""
+    kind = _ANSWER_ALIASES.get(answer_type, answer_type)
     rows = sql_result.rows
-    if answer_type == "number" or answer_type=="text":
+    if kind in ("number", "text"):
+        if not rows or not rows[0]:
+            return None
         return rows[0][0]
-    elif answer_type == "list":
-        return [i[0] for i in rows]
-    elif answer_type=="table":
-        return [list(i) for i in rows]
+    if kind == "boolean":
+        if not rows or not rows[0]:
+            return False
+        val = rows[0][0]
+        if isinstance(val, bool):
+            return val
+        if isinstance(val, (int, float)):
+            return bool(val)
+        if isinstance(val, str):
+            return _parse_bool(val)
+        return None
+    if kind == "list":
+        if not rows:
+            return []
+        return [r[0] for r in rows if r]
+    if kind == "table":
+        if not rows:
+            return []
+        return [list(r) for r in rows]
+    return None
 
 
-def process_type_completion(answer_type, sql_result):
-    if answer_type=="table":
-        rows = re.findall(r'\[(.*?)\]', sql_result[1:-1])
-        result = [row.split(",") for row in rows]
-        new_result = []
-        for row in result:
-            new_row = []
-            for value in row:
-                try: 
-                    value = int(value)
-                except ValueError:
-                    try: 
-                        value = float(value)
-                    except ValueError:
-                        pass
-                new_row.append(value)
-            new_result.append(new_row)
-        return new_result
-    return sql_result
+def _is_coherent(final_answer: str, sql_result: SQLResult, task: Task) -> bool:
+    """Comprueba que `final_answer` se desprenda del resultado real de la consulta SQL ejecutada."""
+    kind = _ANSWER_ALIASES.get(task.answer_type, task.answer_type)
+    rows = sql_result.rows
+
+    clean_value = process_type_sql(kind, sql_result)
+    if clean_value is not None:
+        if verify(final_answer, clean_value, kind, ordered=task.ordered).is_correct:
+            return True
+
+    # Si el modelo seleccionó columnas adicionales (p.ej. SELECT id, nombre ... LIMIT 1),
+    # aceptamos si alguna columna del resultado coincide con la respuesta.
+    if kind in ("number", "text") and len(rows) == 1 and len(rows[0]) > 1:
+        return any(verify(final_answer, cell, kind).is_correct for cell in rows[0] if cell is not None)
+
+    if kind == "list" and rows and len(rows[0]) > 1:
+        num_cols = len(rows[0])
+        for col_idx in range(1, num_cols):
+            col_vals = [r[col_idx] for r in rows if len(r) > col_idx]
+            if verify(final_answer, col_vals, kind, ordered=task.ordered).is_correct:
+                return True
+
+    return False
+
 
 def shaped_reward(prompt: str, completion: str) -> float:
     """Variante con crédito parcial (solo para experimentos; no es la métrica oficial)."""
-    raise NotImplementedError
+    if not isinstance(prompt, str) or not isinstance(completion, str):
+        return 0.0
+    task_id = extract_task_id(prompt)
+    task = get_task(task_id) if task_id else None
+    if task is None:
+        return 0.0
+
+    parsed = parse_completion(completion)
+    if not parsed.is_valid or not parsed.sql_queries:
+        return 0.0
+
+    executor = SQLExecutor(DB_DIR / task.database)
+    real_value = executor.execute(parsed.sql_queries[-1])
+    if not real_value.ok:
+        return 0.1
+
+    score = 0.2
+    clean_value = process_type_sql(task.answer_type, real_value)
+    if clean_value is not None and repr(clean_value) == repr(task.expected_result):
+        score = 0.5
+
+    if parsed.has_answer and reward(prompt, completion) == 1.0:
+        return 1.0
+    return score
