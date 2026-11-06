@@ -24,6 +24,7 @@ from typing import Dict, Optional
 
 from environment import Task
 from parser import parse_completion
+from prompt_builder import extract_task_id
 from verifier import verify
 from sql_executor import SQLExecutor
 
@@ -47,7 +48,7 @@ def get_task(task_id: str) -> Optional[Task]:
 def reward(prompt: str, completion: str) -> float:
     """Recompensa binaria: 1.0 si la respuesta final es correcta y la completion es válida."""
     # Se busca la tarea en la base de datos
-    task_id = prompt.TASK_ID
+    task_id = extract_task_id(prompt)
     task = get_task(task_id)
     if task is None: 
         raise AttributeError("La tarea pedida no se encuentra en la base de datos.")
@@ -59,12 +60,12 @@ def reward(prompt: str, completion: str) -> float:
     if len(queries) == 0: return 0.0 # No hay query
     real_value = executor.execute(queries[-1])
     # Si hay errores en la ejecución del SQL
-    if real_value.error is not None: return 0.0
+    if not real_value.ok: return 0.0
     clean_value = process_type_sql(task.answer_type, real_value)
     coherence = verify(parsed_completion.final_answer, clean_value, task.answer_type)
     # Si el resultado de la query no es correcto, no hay puntaje
     if not coherence.is_correct: return 0.0
-    # Se ejecuta el gold_sql para encontrar el target    
+    # Se ejecuta el gold_sql para encontrar el target
     target = process_type_sql(task.answer_type, executor.execute(task.gold_sql))
     # Se verifica que la respuesta sea correcta
     result = verify(parsed_completion.final_answer, target, task.answer_type)
@@ -106,13 +107,3 @@ def process_type_completion(answer_type, sql_result):
 def shaped_reward(prompt: str, completion: str) -> float:
     """Variante con crédito parcial (solo para experimentos; no es la métrica oficial)."""
     raise NotImplementedError
-
-class check:
-    def __init__(self, task_id):
-        self.TASK_ID = task_id
-
-print(load_task_registry("dataset/train.jsonl"))
-print(reward(check('hosp_0007'), "<sql>SELECT m.name FROM prescriptions pr JOIN appointments a ON pr.appointment_id = a.appointment_id JOIN medications m ON pr.medication_id = m.medication_id WHERE a.diagnosis = 'Tumor benigno' GROUP BY m.medication_id, m.name HAVING COUNT(*) > 8 ORDER BY m.name</sql><answer>[Ketorolaco, Metamizol, Paracetamol]</answer>"))
-#print(reward(check('hosp_0034'), "<sql>SELECT m.name, SUM(pr.quantity) AS total FROM prescriptions pr JOIN medications m ON pr.medication_id = m.medication_id WHERE m.category = 'anticoagulante' GROUP BY m.medication_id, m.name ORDER BY total DESC LIMIT 3</sql><answer>[[Ácido acetilsalicílico, 1110], [Warfarina, 729], [Rivaroxabán, 704]]</answer>"))
-print(process_type_completion("table",'[[Ácido acetilsalicílico, 1110], [Warfarina, 729], [Rivaroxabán, 704]]'))
-print(reward(check('hosp_0001'), "<sql>SELECT SUM(a.cost) FROM appointments a JOIN doctors d ON a.doctor_id = d.doctor_id WHERE d.specialty = 'Medicina Interna' AND a.status = 'completed' AND strftime('%Y-%m', a.appointment_date) = '2024-11'</sql><answer>282000</answer>"))
