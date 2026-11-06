@@ -21,6 +21,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 from dotenv import load_dotenv
 
 from generator.schema_generator import build_schema, to_prompt_description
+from harness import reward
 from harness.parser import parse_completion
 from harness.prompt_builder import (
     build_prompt,
@@ -154,15 +155,16 @@ class SQLEnvironment:
             completion = policy(self.messages)
             _, done = self.step(completion)
 
-        reward_val = 0.0
-        if self.last_final_answer is not None:
-            ver = verify(
-                prediction=self.last_final_answer,
-                target=task.expected_result,
-                answer_type=task.answer_type,
-                ordered=task.ordered,
-            )
-            reward_val = 1.0 if ver.is_correct else 0.0
+        reward_val = reward(init_prompt, completion)
+        # reward_val = 0.0
+        # if self.last_final_answer is not None:
+        #     ver = verify(
+        #         prediction=self.last_final_answer,
+        #         target=task.expected_result,
+        #         answer_type=task.answer_type,
+        #         ordered=task.ordered,
+        #     )
+        #     reward_val = 1.0 if ver.is_correct else 0.0
 
         return Episode(
             task_id=task.id,
