@@ -65,6 +65,7 @@ class Episode:
 
     task_id: str
     prompt: str
+    completion: str = ""
     turns: List[Dict[str, str]] = field(default_factory=list)   # [{"role": ..., "content": ...}]
     final_answer: Optional[str] = None
     reward: Optional[float] = None
@@ -124,8 +125,9 @@ class SQLEnvironment:
         self.messages.append({"role": "assistant", "content": completion})
         parsed = parse_completion(completion)
 
-        # 0. Si las etiquetas están mal formadas, pedir corrección sin usar literales <sql>/<answer>
-        if not parsed.is_valid:
+        # 0. Si las etiquetas del turno están mal formadas, pedir corrección sin usar literales <sql>/<answer>
+        turn_errors = [e for e in parsed.errors if e not in ("no_sql_block", "no_answer_block")]
+        if turn_errors:
             done = self.total_turns >= max_total_turns
             obs = build_tool_observation(
                 "",
@@ -199,9 +201,11 @@ class SQLEnvironment:
             if ver.is_correct and _is_coherent(self.last_final_answer, self.last_sql_result, task):
                 reward_val = 1.0
 
+        full_completion = "\n".join(t["content"] for t in self.messages[2:])
         return Episode(
             task_id=task.id,
             prompt=init_prompt,
+            completion=full_completion,
             turns=list(self.messages),
             final_answer=self.last_final_answer,
             reward=reward_val,
@@ -237,3 +241,4 @@ if __name__ == "__main__":
     ep = env.run_episode(task, mock_policy)
     print(f"Episodio ejecutado. Final answer: {ep.final_answer}, Reward: {ep.reward}")
     print(f"Total de turnos: {len(ep.turns)}")
+    print(f"Completion: {ep.completion}")
