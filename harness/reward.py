@@ -76,7 +76,7 @@ def reward(prompt: str, completion: str) -> float:
 """Procesa información extraída de la consulta sql"""
 def process_type_sql(answer_type, sql_result):
     rows = sql_result.rows
-    if answer_type == "number" or answer_type=="text":
+    if answer_type in ("number", "text", "boolean"):
         return rows[0][0]
     elif answer_type == "list":
         return [i[0] for i in rows]

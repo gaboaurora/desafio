@@ -46,7 +46,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 from harness.environment import Episode, SQLEnvironment, Task
-from harness.reward import reward
+from harness.reward import get_task, load_task_registry, reward
 
 ROOT = Path(__file__).resolve().parent.parent
 DATASET_DIR = ROOT / "dataset"
@@ -199,6 +199,8 @@ def _is_observation(turn: Dict[str, str]) -> bool:
 def _ensure_reward(episode: Episode) -> Episode:
     """Si el entorno no calculó el reward, se calcula con la interfaz común."""
     if episode.reward is None:
+        if get_task(episode.task_id) is None:
+            load_task_registry(*(str(DATASET_DIR / f"{s}.jsonl") for s in ("train", "eval", "test")))
         episode.reward = float(reward(episode.prompt, episode_completion(episode)))
     return episode
 
