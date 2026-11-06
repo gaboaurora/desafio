@@ -8,3 +8,6 @@ pgdata/
 # Salidas de experimentos (trazas, baselines, SFT/DPO). Se conserva la carpeta.
 outputs/*
 !outputs/.gitkeep
+
+# Trazas
+trace-viewer/
