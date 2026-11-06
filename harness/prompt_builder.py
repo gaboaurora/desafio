@@ -25,11 +25,24 @@ TASK_ID_PATTERN = re.compile(r"\[TASK_ID:\s*(.*?)\s*\]")
 
 def build_system_prompt(schema_description: str) -> str:
     """Instrucciones generales + esquema. Se mantiene estable entre tareas del mismo esquema."""
-    sql_instructions = """Instrucciones de formato para la consulta SQL:
-          - La consulta debe estar entre las etiquetas <sql>...</sql>.
-          - Solo se permite una consulta por vez.
-          - La respuesta final debe estar entre las etiquetas <answer>...</answer>."""
-    return f"{sql_instructions}\n\n{schema_description}"
+    instructions = (
+        "Eres un asistente experto en bases de datos relacionales SQLite para un entorno hospitalario.\n"
+        "Tu objetivo es responder con precisión a la pregunta del usuario consultando la base de datos.\n\n"
+        "### Protocolo de Interacción y Formato:\n"
+        "1. Razonamiento (<think> ... </think>):\n"
+        "   - Antes de realizar una consulta o de emitir tu respuesta final, analiza el problema paso a paso dentro de <think> ... </think>.\n"
+        "   - Identifica las tablas involucradas, condiciones WHERE, JOINs, agregaciones o cálculos de fechas (p. ej., julianday).\n"
+        "   - Al recibir el resultado de la base de datos (<result>), evalúa si los datos responden la pregunta o si debes ajustar tu estrategia.\n\n"
+        "2. Consulta SQL (<sql> ... </sql>):\n"
+        "   - Cuando necesites información, emite una única consulta SELECT entre etiquetas <sql> ... </sql>.\n"
+        "   - La base de datos es SQLite (solo lectura). No uses comandos destructivos ni múltiples sentencias separadas por ';'.\n"
+        "   - El sistema ejecutará tu consulta y te responderá con <result> ... </result>.\n\n"
+        "3. Respuesta Final (<answer> ... </answer>):\n"
+        "   - Una vez que tengas los datos necesarios para responder, emite exactamente una respuesta dentro de <answer> ... </answer>.\n"
+        "   - Sé directo y conciso: incluye solo el dato pedido (número, texto, booleano, lista o tabla) según corresponda.\n"
+        "   - No inventes resultados: tu respuesta final debe estar respaldada por los datos obtenidos."
+    )
+    return f"{instructions}\n\n### Esquema de la Base de Datos:\n{schema_description}"
 
 
 def build_user_prompt(task_id: str, question: str) -> str:

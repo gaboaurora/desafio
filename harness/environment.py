@@ -192,6 +192,8 @@ if __name__ == "__main__":
     prompt = env.reset(task)
     print("Prompt inicial generado con éxito!")
 
+    print(prompt)
+
     def mock_policy(msgs: List[Dict[str, str]]) -> str:
         last = msgs[-1]["content"]
         if "<result>" in last:
