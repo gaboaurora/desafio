@@ -29,7 +29,6 @@ from harness.prompt_builder import (
     build_user_prompt,
 )
 from harness.sql_executor import SQLExecutor
-from harness.verifier import verify
 
 load_dotenv()
 
@@ -65,6 +64,7 @@ class Episode:
 
     task_id: str
     prompt: str
+    completion: str
     turns: List[Dict[str, str]] = field(default_factory=list)   # [{"role": ..., "content": ...}]
     final_answer: Optional[str] = None
     reward: Optional[float] = None
@@ -154,22 +154,12 @@ class SQLEnvironment:
             completion = policy(self.messages)
             _, done = self.step(completion)
 
-        reward_val = 0.0
-        if self.last_final_answer is not None:
-            ver = verify(
-                prediction=self.last_final_answer,
-                target=task.expected_result,
-                answer_type=task.answer_type,
-                ordered=task.ordered,
-            )
-            reward_val = 1.0 if ver.is_correct else 0.0
-
         return Episode(
             task_id=task.id,
             prompt=init_prompt,
             turns=list(self.messages),
             final_answer=self.last_final_answer,
-            reward=reward_val,
+            completion=completion,
         )
 
 
@@ -201,5 +191,6 @@ if __name__ == "__main__":
         return "<sql>SELECT name FROM departments WHERE floor = 1 LIMIT 1;</sql>"
 
     ep = env.run_episode(task, mock_policy)
-    print(f"Episodio ejecutado. Final answer: {ep.final_answer}, Reward: {ep.reward}")
+    print(f"Episodio ejecutado. Final answer: {ep.final_answer}")
     print(f"Total de turnos: {len(ep.turns)}")
+    print(f"Completion: {ep.completion}")
