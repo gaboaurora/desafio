@@ -8,8 +8,11 @@ Protocolo de etiquetas (ver prompt_builder):
 
 El parser es deliberadamente estricto, porque sus decisiones son parte de la recompensa:
 
+  - <sql> vacío              => inválida.
   - Más de un bloque <answer>  => inválida ("varias respuestas a la vez").
   - <answer> vacío             => inválida.
+  - No hay bloque <answer>     => inválida.
+  - No hay bloque <sql>        => inválida.
   - Etiquetas anidadas, sin cerrar o cerradas sin abrir => inválida.
   - Bloques <result> se extraen como NO confiables: el reward re-ejecuta el SQL del modelo y
     jamás usa un <result> presente en la completion (el modelo podría fabricarlo).
@@ -113,6 +116,9 @@ def parse_completion(completion: str) -> ParsedCompletion:
         else:
             parsed.result_blocks.append(content.strip())
 
+    if len(parsed.sql_queries) == 0:
+        parsed.invalidate("no_sql_block")
+
     if len(answers) > 1:
         parsed.invalidate("multiple_answer_blocks")
     elif len(answers) == 1:
@@ -120,6 +126,8 @@ def parse_completion(completion: str) -> ParsedCompletion:
             parsed.invalidate("empty_answer")
         else:
             parsed.final_answer = answers[0]
+    else:
+        parsed.invalidate("no_answer_block")
     return parsed
 
 
