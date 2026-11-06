@@ -64,7 +64,7 @@ class Episode:
 
     task_id: str
     prompt: str
-    completion: str
+    completion: str = ""
     turns: List[Dict[str, str]] = field(default_factory=list)   # [{"role": ..., "content": ...}]
     final_answer: Optional[str] = None
     reward: Optional[float] = None
