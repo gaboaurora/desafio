@@ -22,11 +22,11 @@ import re
 
 from typing import Dict, Optional
 
-from environment import Task
-from parser import parse_completion
-from prompt_builder import extract_task_id
-from verifier import verify
-from sql_executor import SQLExecutor
+from harness.environment import Task
+from harness.parser import parse_completion
+from harness.prompt_builder import extract_task_id
+from harness.verifier import verify
+from harness.sql_executor import SQLExecutor
 
 _TASK_REGISTRY: Dict[str, Task] = {}
 
