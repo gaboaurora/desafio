@@ -7,3 +7,5 @@ pgdata/
 
 # Trazas
 trace-viewer/
+
+outputs/*
