@@ -32,8 +32,8 @@ _NUM_RE = re.compile(
     r"[+-]?(?:"
     r"\d{1,3}(?:\.\d{3})+,\d+"
     r"|\d{1,3}(?:,\d{3})+\.\d+"
-    r"|\d{1,3}(?:\.\d{3})+"
-    r"|\d{1,3}(?:,\d{3})+"
+    r"|\d{1,3}(?:\.\d{3})+(?![.,\d])"
+    r"|\d{1,3}(?:,\d{3})+(?![.,\d])"
     r"|\d+(?:[.,]\d+)?"
     r")"
 )
@@ -137,7 +137,12 @@ def _verify_number(prediction: str, target: Any, tolerance: float) -> Verificati
     parsed = normalize_number(prediction)
     if parsed is None or isinstance(target, bool) or not isinstance(target, (int, float)):
         return VerificationResult(False, parsed, target, "número no interpretable")
-    ok = _numbers_close(parsed, float(target), tolerance, integer_target=float(target).is_integer())
+    integer_target = float(target).is_integer()
+    ok = _numbers_close(parsed, float(target), tolerance, integer_target=integer_target)
+    if not ok and not integer_target:
+        alt = _parse_decimal_fallback(prediction)
+        if alt is not None and _numbers_close(alt, float(target), tolerance, integer_target=False):
+            return VerificationResult(True, alt, target, "")
     return VerificationResult(ok, parsed, target, "" if ok else "número distinto")
 
 
@@ -154,6 +159,8 @@ def _verify_text(prediction: str, target: Any) -> VerificationResult:
 
 
 def _verify_boolean(prediction: str, target: Any) -> VerificationResult:
+    if target is None or not isinstance(target, (bool, int)):
+        return VerificationResult(False, None, target, "objetivo booleano inválido")
     parsed = _parse_bool(prediction)
     expected = bool(target)
     if parsed is None:
@@ -209,9 +216,9 @@ def _parse_numeric_token(token: str) -> Optional[float]:
             else:
                 t = t.replace(",", "")
             return float(t)
-        if has_comma and re.fullmatch(r"[+-]?\d{1,3}(,\d{3})+", t):
+        if has_comma and re.fullmatch(r"[+-]?[1-9]\d{0,2}(,\d{3})+", t):
             return float(t.replace(",", ""))
-        if has_dot and re.fullmatch(r"[+-]?\d{1,3}(\.\d{3})+", t):
+        if has_dot and re.fullmatch(r"[+-]?[1-9]\d{0,2}(\.\d{3})+", t):
             return float(t.replace(".", ""))
         t = t.replace(",", ".")
         if re.fullmatch(r"[+-]?\d+(\.\d+)?", t):
@@ -221,8 +228,25 @@ def _parse_numeric_token(token: str) -> Optional[float]:
     return None
 
 
+def _parse_decimal_fallback(text: str) -> Optional[float]:
+    """Si un número con un único '.' o ',' y 3 decimales fue leído como miles, devuelve su lectura decimal."""
+    matches = list(_NUM_RE.finditer(text))
+    if len(matches) != 1:
+        return None
+    rest = text[: matches[0].start()] + " " + text[matches[0].end() :]
+    if _contains_number_word(rest):
+        return None
+    t = matches[0].group(0).strip().replace(" ", "").replace(",", ".")
+    if re.fullmatch(r"[+-]?\d+\.\d{3}", t):
+        try:
+            return float(t)
+        except ValueError:
+            return None
+    return None
+
+
 def _contains_number_word(text: str) -> bool:
-    words = set(_ES_UNITS) | set(_EN_UNITS) | {"mil", "thousand", "hundred"}
+    words = (set(_ES_UNITS) | set(_EN_UNITS) | {"mil", "thousand", "hundred"}) - {"un", "una"}
     return any(tok in words for tok in normalize_text(text).split())
 
 
@@ -272,8 +296,13 @@ def _split_items(text: str) -> list[str]:
     chunks = re.split(r"[\n;]|(?:\s*\|\s*)", cleaned)
     if len(chunks) == 1:
         chunks = re.split(r",", chunks[0])
-    if len(chunks) == 1 and re.search(r"\s+y\s+", chunks[0], flags=re.IGNORECASE):
-        chunks = re.split(r"\s+y\s+", chunks[0], flags=re.IGNORECASE)
+        expanded: list[str] = []
+        for ch in chunks:
+            if re.search(r"\s+y\s+", ch, flags=re.IGNORECASE):
+                expanded.extend(re.split(r"\s+y\s+", ch, flags=re.IGNORECASE))
+            else:
+                expanded.append(ch)
+        chunks = expanded
     items = []
     for chunk in chunks:
         chunk = re.sub(r"^[\s\-\*\u2022]+", "", chunk.strip())
@@ -320,8 +349,14 @@ def _cell_equal(pred: str, target: Any, tolerance: float) -> bool:
     if isinstance(target, bool):
         return _parse_bool(pred) is target
     if isinstance(target, (int, float)):
+        integer_target = float(target).is_integer()
         parsed = normalize_number(pred)
-        return parsed is not None and _numbers_close(parsed, float(target), tolerance, float(target).is_integer())
+        if parsed is not None and _numbers_close(parsed, float(target), tolerance, integer_target):
+            return True
+        if not integer_target:
+            alt = _parse_decimal_fallback(pred)
+            return alt is not None and _numbers_close(alt, float(target), tolerance, False)
+        return False
     return normalize_text(pred) == normalize_text(target)
 
 

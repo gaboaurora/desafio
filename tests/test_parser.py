@@ -18,9 +18,11 @@ def test_single_sql_and_answer():
     assert [k for k, _ in p.events] == ["sql", "result", "answer"]
 
 
-def test_sql_only_turn_has_no_answer_but_is_valid():
+def test_sql_only_turn_extracts_sql_but_is_invalid():
+    """Un turno solo con <sql> se parsea (el entorno lo ejecuta), pero sin <answer> es inválido."""
     p = parse_completion(f"<sql>{SQL}</sql>")
-    assert p.is_valid and p.final_answer is None and p.sql_queries == [SQL]
+    assert not p.is_valid and "no_answer_block" in p.errors
+    assert p.final_answer is None and p.sql_queries == [SQL]
 
 
 def test_multiple_sql_blocks_preserve_order():
@@ -42,7 +44,7 @@ def test_markdown_fences_and_trailing_semicolon_are_stripped():
 
 def test_text_outside_tags_is_ignored():
     p = parse_completion("La respuesta es 38. <sql>SELECT 1</sql> Respuesta final: 40")
-    assert p.is_valid and p.final_answer is None
+    assert p.final_answer is None and p.errors == ["no_answer_block"]
 
 
 def test_unknown_tags_are_ignored():
@@ -104,10 +106,11 @@ def test_model_written_result_block_is_extracted_but_not_trusted():
     assert p.final_answer == "999"          # la verdad la decide el reward re-ejecutando el SQL
 
 
-def test_answer_without_sql_is_parseable():
-    """Responder sin consultar es válido para el parser; penalizarlo es decisión del reward."""
+def test_answer_without_sql_is_invalid():
+    """Responder sin consultar se parsea, pero es inválido (no_sql_block)."""
     p = parse_completion("<answer>38</answer>")
-    assert p.is_valid and p.sql_queries == [] and p.final_answer == "38"
+    assert not p.is_valid and "no_sql_block" in p.errors
+    assert p.sql_queries == [] and p.final_answer == "38"
 
 
 def test_helpers_agree_with_parse_completion():

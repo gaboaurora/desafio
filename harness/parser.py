@@ -28,13 +28,14 @@ from typing import List, Optional, Tuple
 
 TAGS = ("sql", "answer", "result")
 _TAG_RE = re.compile(r"<\s*(/?)\s*(sql|answer|result)\s*>", re.IGNORECASE)
+_THINK_RE = re.compile(r"<\s*think\s*>.*?<\s*/\s*think\s*>", re.IGNORECASE | re.DOTALL)
 _FENCE_RE = re.compile(r"^\s*```[a-zA-Z]*\s*\n?|\n?\s*```\s*$")
 
 
 @dataclass
 class ParsedCompletion:
     sql_queries: List[str] = field(default_factory=list)      # en orden de aparición, limpias
-    final_answer: Optional[str] = None                        # contenido del único <answer>
+    final_answer: Optional[str] = field(default=None)         # contenido del único <answer>
     result_blocks: List[str] = field(default_factory=list)    # observaciones presentes (NO confiables)
     events: List[Tuple[str, str]] = field(default_factory=list)  # [(kind, content), ...] en orden
     is_valid: bool = True
@@ -62,12 +63,15 @@ def _tokenize(completion: str) -> Tuple[List[Tuple[str, str]], List[str]]:
     """
     Recorre las etiquetas en orden y devuelve los bloques (kind, content) y los errores
     estructurales detectados (anidamiento, cierre sin apertura, apertura sin cierre).
+    Ignora bloques <think>...</think> para que menciones de etiquetas durante el razonamiento
+    no invaliden la completion.
     """
+    cleaned = _THINK_RE.sub("", completion)
     events: List[Tuple[str, str]] = []
     errors: List[str] = []
     open_kind: Optional[str] = None
     open_pos = 0
-    for m in _TAG_RE.finditer(completion):
+    for m in _TAG_RE.finditer(cleaned):
         closing, kind = bool(m.group(1)), m.group(2).lower()
         if not closing:
             if open_kind is not None:
@@ -81,7 +85,7 @@ def _tokenize(completion: str) -> Tuple[List[Tuple[str, str]], List[str]]:
             if kind != open_kind:
                 errors.append(f"mismatched_closing:{kind}_closes_{open_kind}")
                 return events, errors
-            events.append((kind, completion[open_pos:m.start()]))
+            events.append((kind, cleaned[open_pos:m.start()]))
             open_kind = None
     if open_kind is not None:
         errors.append(f"unclosed_tag:{open_kind}")
@@ -113,6 +117,9 @@ def parse_completion(completion: str) -> ParsedCompletion:
         else:
             parsed.result_blocks.append(content.strip())
 
+    if len(parsed.sql_queries) == 0:
+        parsed.invalidate("no_sql_block")
+
     if len(answers) > 1:
         parsed.invalidate("multiple_answer_blocks")
     elif len(answers) == 1:
@@ -120,6 +127,8 @@ def parse_completion(completion: str) -> ParsedCompletion:
             parsed.invalidate("empty_answer")
         else:
             parsed.final_answer = answers[0]
+    else:
+        parsed.invalidate("no_answer_block")
     return parsed
 
 
