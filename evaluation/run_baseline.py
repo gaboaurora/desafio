@@ -46,7 +46,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 from harness.environment import Episode, SQLEnvironment, Task
-from harness.reward import get_task, load_task_registry, reward
+from harness.reward import get_task, load_task_registry, reward, reward_stages
 
 ROOT = Path(__file__).resolve().parent.parent
 DATASET_DIR = ROOT / "dataset"
@@ -357,6 +357,39 @@ def calibration(results: List[Dict[str, Any]], key: str = "difficulty") -> Dict[
     return out
 
 
+STAGES = ("sql_executable", "result_correct", "answer_correct")
+
+
+def episode_stages(episode: Episode) -> Dict[str, bool]:
+    """Etapas intermedias de un episodio (Entrega 1): SQL ejecutable -> resultado = GT -> respuesta correcta.
+
+    La brecha 1->2 mide consultas que corren pero no traen el dato; la 2->3, resultados correctos mal
+    interpretados o mal formateados en <answer>.
+    """
+    if get_task(episode.task_id) is None:
+        load_task_registry(*(str(DATASET_DIR / f"{s}.jsonl") for s in ("train", "eval", "test")))
+    st = reward_stages(episode.prompt, episode_completion(episode))
+    return {"sql_executable": st.sql_ok, "result_correct": st.result_ok, "answer_correct": st.answer_ok}
+
+
+def stage_rates(
+    tasks: Sequence[Task], episodes: Sequence[Sequence[Episode]], key: str = "difficulty"
+) -> Dict[str, Dict[str, float]]:
+    """Fracción de episodios que alcanza cada etapa, por grupo (`difficulty`, `answer_type` o `block`)."""
+    groups: Dict[str, List[Dict[str, bool]]] = defaultdict(list)
+    for task, eps in zip(tasks, episodes):
+        label = ("heldout" if task.template_heldout else "seen") if key == "block" else getattr(task, key)
+        for e in eps:
+            st = episode_stages(e)
+            groups[label].append(st)
+            groups["all"].append(st)
+    out = {}
+    for g, sts in groups.items():
+        n = len(sts)
+        out[g] = {"n_episodes": n, **{m: round(sum(x[m] for x in sts) / n, 4) for m in STAGES}}
+    return out
+
+
 def k_values_for(n: int, k: int) -> List[int]:
     candidates = {1, k} | {v for v in (2, 4, 8, 16) if v < k}
     return sorted(v for v in candidates if 1 <= v <= n)
@@ -381,6 +414,7 @@ def summarize_model(tasks: Sequence[Task], episodes: Sequence[Sequence[Episode]]
         "by_block": aggregate_by(results, "block", ks),
         "calibration": _ordered_levels(calibration(results)),
         "tool_usage": {m: round(v, 4) for m, v in tool_usage_stats(flat).items()},
+        "stage_rates": _ordered_levels(stage_rates(tasks, episodes)),
         "per_task": results,
     }
 
@@ -405,6 +439,7 @@ def write_summary_csv(path: Path, report: Dict[str, Any]) -> None:
                 row = {"model": model, "grouping": grouping.replace("by_", ""), "group": group, **vals}
                 if grouping == "by_difficulty":
                     row.update({f"calib_{m}": v for m, v in summary["calibration"].get(group, {}).items() if m != "n_tasks"})
+                    row.update({f"rate_{m}": v for m, v in summary.get("stage_rates", {}).get(group, {}).items() if m != "n_episodes"})
                 rows.append(row)
     if not rows:
         return
@@ -441,6 +476,12 @@ def format_table(report: Dict[str, Any]) -> str:
             f"  formato válido {usage['valid_format_rate']:.2f} · SQL emitido {usage['sql_emitted_rate']:.2f}"
             f" · SQL ejecutable {usage['executable_sql_rate']:.2f} · turnos {usage['avg_turns']:.2f}"
         )
+        rates = s.get("stage_rates", {}).get("all")
+        if rates:
+            lines.append(
+                f"  etapas: SQL ejecutable {rates['sql_executable']:.2f} → resultado = GT {rates['result_correct']:.2f}"
+                f" → respuesta correcta {rates['answer_correct']:.2f}"
+            )
     return "\n".join(lines)
 
 

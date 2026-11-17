@@ -195,3 +195,40 @@ def test_main_end_to_end_with_oracle(tmp_path, monkeypatch, capsys):
     again = json.loads(out.read_text(encoding="utf-8"))["models"]["oracle"]
     assert again["samples_per_task"] == 3 and again["overall"]["pass@1"] == 1.0
     assert "oracle" in capsys.readouterr().out
+
+
+# ----------------------------------------------------------------------------- etapas intermedias (E1)
+
+def test_stage_rates_separate_sql_result_and_answer(tasks):
+    """Oráculo: 1/1/1. Gold SQL + respuesta errónea: 1/1/0. SQL que no trae el dato: 1/0/0. Sin SQL: 0/0/0."""
+    t = next(x for x in tasks if x.answer_type == "number")
+
+    def factory(task, sample):
+        if sample == 0:
+            return rb.oracle_policy_factory(task, sample)
+        replies = {
+            1: [f"<sql>{task.gold_sql}</sql>", "<answer>-987654321</answer>"],
+            2: ["<sql>SELECT -987654321 AS x</sql>", "<answer>-987654321</answer>"],
+            3: ["<answer>3</answer>"],
+        }[sample]
+        it = iter(replies)
+        return lambda messages: next(it)
+
+    episodes = rb.run_model_on_tasks("x", [t], 4, FakeEnv(), policy_factory=factory, progress=False)
+    per_ep = [rb.episode_stages(e) for e in episodes[0]]
+    assert [tuple(d.values()) for d in per_ep] == [
+        (True, True, True), (True, True, False), (True, False, False), (False, False, False)]
+    rates = rb.stage_rates([t], episodes)["all"]
+    assert (rates["sql_executable"], rates["result_correct"], rates["answer_correct"]) == (0.75, 0.5, 0.25)
+    summary = rb.summarize_model([t], episodes, k=4)
+    assert summary["stage_rates"]["all"]["answer_correct"] == 0.25
+    assert summary["stage_rates"]["all"]["answer_correct"] == summary["overall"]["pass@1"]
+
+
+def test_summary_csv_has_stage_rates(tasks, tmp_path):
+    episodes = rb.run_model_on_tasks("oracle", tasks[:4], 1, FakeEnv(), policy_factory=rb.oracle_policy_factory, progress=False)
+    report = {"models": {"oracle": rb.summarize_model(tasks[:4], episodes, k=1)}}
+    path = tmp_path / "s.csv"
+    rb.write_summary_csv(path, report)
+    header = path.read_text().splitlines()[0]
+    assert "rate_sql_executable" in header and "rate_answer_correct" in header
