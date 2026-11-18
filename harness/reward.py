@@ -11,14 +11,15 @@ Flujo:
      respuesta final sea consistente con el resultado real (evita que el modelo invente <result>).
   4. `verify(...)` compara la respuesta final con el ground truth.
 
-Recompensa binaria por defecto (1.0 / 0.0). Opcionalmente, `shaped_reward` entrega crédito parcial
-(p.ej. 0.2 por SQL ejecutable, 0.5 por resultado correcto sin respuesta final bien formateada) para
-experimentos del proyecto de curso; la versión final reportada debe ser la binaria.
+Recompensa binaria por defecto (1.0 / 0.0). Para el proyecto de curso hay dos variantes con crédito
+parcial, `reward_relajada` y `reward_estricta` (ver `REWARD_FUNCTIONS`); la métrica reportada
+siempre es la binaria.
 """
 
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -156,29 +157,118 @@ def _is_coherent(final_answer: str, sql_result: SQLResult, task: Task) -> bool:
     return False
 
 
-def shaped_reward(prompt: str, completion: str) -> float:
-    """Variante con crédito parcial (solo para experimentos; no es la métrica oficial)."""
+# --------------------------------------------------------------------------------------
+# Recompensas parciales del proyecto de curso (Entrega 1): "relajada" y "estricta".
+# La métrica oficial sigue siendo `reward` (binaria); estas solo se usan como señal en GRPO.
+# --------------------------------------------------------------------------------------
+
+_STRUCTURAL_ERRORS = ("nested_tag", "closing_without_opening", "mismatched_closing", "unclosed_tag",
+                      "empty_sql_block", "empty_completion")
+
+
+@dataclass
+class RewardStages:
+    """Etapas intermedias de un episodio (para recompensas parciales y métricas)."""
+
+    sql_present: bool = False   # hay al menos un <sql> bien formado
+    sql_ok: bool = False        # la última consulta ejecuta sin error
+    result_ok: bool = False     # el resultado de la última consulta contiene el ground truth
+    answer_ok: bool = False     # recompensa binaria = 1.0
+
+
+def _render(value: Any, kind: str) -> str:
+    """Convierte un valor tipado (desde process_type_sql) en texto que el verificador entiende."""
+    if kind == "boolean":
+        return "Sí" if value else "No"
+    if kind == "list":
+        return "\n".join(str(v) for v in value)
+    if kind == "table":
+        return "\n".join(" | ".join(str(c) for c in row) for row in value)
+    return str(value)
+
+
+def _result_matches_gt(sql_result: SQLResult, task: Task) -> bool:
+    """¿El resultado real de la consulta ya contiene la respuesta correcta?
+
+    Usa el mismo verificador que la recompensa binaria (no `repr`), y acepta columnas extra
+    igual que `_is_coherent`.
+    """
+    kind = _ANSWER_ALIASES.get(task.answer_type, task.answer_type)
+    rows = sql_result.rows
+    candidates = []
+    clean_value = process_type_sql(kind, sql_result)
+    if clean_value is not None:
+        candidates.append(clean_value)
+    if kind in ("number", "text") and len(rows) == 1 and len(rows[0]) > 1:
+        candidates.extend(cell for cell in rows[0][1:] if cell is not None)
+    if kind == "list" and rows and len(rows[0]) > 1:
+        for col_idx in range(1, len(rows[0])):
+            candidates.append([r[col_idx] for r in rows if len(r) > col_idx])
+    for cand in candidates:
+        text = _render(cand, kind)
+        if text.strip() and verify(text, task.expected_result, kind, ordered=task.ordered).is_correct:
+            return True
+    return False
+
+
+def reward_stages(prompt: str, completion: str) -> RewardStages:
+    """Calcula las etapas SQL presente -> SQL ejecutable -> resultado correcto -> respuesta correcta.
+
+    A diferencia de `reward`, una completion sin <answer> (p.ej. se agotaron los turnos) aún
+    puede obtener crédito por las etapas de SQL; los errores estructurales de etiquetas no.
+    """
+    st = RewardStages()
     if not isinstance(prompt, str) or not isinstance(completion, str):
-        return 0.0
+        return st
     task_id = extract_task_id(prompt)
     task = get_task(task_id) if task_id else None
     if task is None:
-        return 0.0
+        return st
 
     parsed = parse_completion(completion)
-    if not parsed.is_valid or not parsed.sql_queries:
-        return 0.0
+    if any(e.startswith(_STRUCTURAL_ERRORS) for e in parsed.errors) or not parsed.sql_queries:
+        return st
+    st.sql_present = True
 
     executor = SQLExecutor(DB_DIR / task.database)
     real_value = executor.execute(parsed.sql_queries[-1])
     if not real_value.ok:
-        return 0.1
+        return st
+    st.sql_ok = True
+    st.result_ok = _result_matches_gt(real_value, task)
+    st.answer_ok = reward(prompt, completion) == 1.0
+    return st
 
-    score = 0.2
-    clean_value = process_type_sql(task.answer_type, real_value)
-    if clean_value is not None and repr(clean_value) == repr(task.expected_result):
-        score = 0.5
 
-    if parsed.has_answer and reward(prompt, completion) == 1.0:
+def reward_relajada(prompt: str, completion: str) -> float:
+    """0 sin SQL válido | 0.1 SQL con error | 0.2 SQL ejecuta | 0.5 resultado = GT | 1.0 binaria."""
+    st = reward_stages(prompt, completion)
+    if st.answer_ok:
         return 1.0
-    return score
+    if st.result_ok:
+        return 0.5
+    if st.sql_ok:
+        return 0.2
+    if st.sql_present:
+        return 0.1
+    return 0.0
+
+
+def reward_estricta(prompt: str, completion: str) -> float:
+    """0 hasta que el resultado = GT | 0.5 resultado correcto pero respuesta no aceptada | 1.0 binaria."""
+    st = reward_stages(prompt, completion)
+    if st.answer_ok:
+        return 1.0
+    if st.result_ok:
+        return 0.5
+    return 0.0
+
+
+# Compatibilidad con el nombre anterior.
+shaped_reward = reward_relajada
+
+REWARD_FUNCTIONS = {
+    "binaria": reward,
+    "relajada": reward_relajada,
+    "estricta": reward_estricta,
+}
