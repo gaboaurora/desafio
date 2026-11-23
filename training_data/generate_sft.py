@@ -16,24 +16,45 @@ Uso previsto:
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Optional, Set
 
 from harness.environment import Episode
 from harness.parser import clean_sql, parse_completion
+from harness.reward import get_task
 
 DEFAULT_TRACES_FILE = "outputs/traces_qwen2.5-coder_1.5b-instruct-q4_K_M.jsonl"
 
+_PROTOCOL_ERROR_MARKERS = (
+    "Etiquetas mal formadas",
+    "No se detectó bloque sql",
+)
+
+
+def _has_protocol_error(turns: List[Dict[str, str]]) -> bool:
+    """Detecta episodios con turnos assistant de formato roto o <result> inventado."""
+    for turn in turns:
+        role = turn.get("role", "")
+        content = turn.get("content", "")
+        if role == "assistant" and "<result>" in content.lower():
+            return True
+        if role == "user" and any(marker in content for marker in _PROTOCOL_ERROR_MARKERS):
+            return True
+    return False
+
 
 def filter_correct(episodes: List[Episode]) -> List[Episode]:
-    """Filtra y conserva únicamente los episodios con reward == 1.0 y respuesta válida, deduplicados."""
+    """Filtra episodios con reward == 1.0, sin errores de protocolo y deduplicados por (task_id, SQL)."""
     correct: List[Episode] = []
     seen_keys: Set[str] = set()
     for ep in episodes:
         if (ep.reward or 0.0) < 1.0:
             continue
         if not ep.final_answer:
+            continue
+        if _has_protocol_error(ep.turns):
             continue
         # Extraemos la consulta SQL del asistente para deduplicar
         assistant_text = "\n".join(
@@ -50,13 +71,17 @@ def filter_correct(episodes: List[Episode]) -> List[Episode]:
     return correct
 
 
-def to_chat_format(episode: Episode) -> Dict[str, Any]:
+def to_chat_format(episode: Episode, difficulty: Optional[str] = None) -> Dict[str, Any]:
     """
     Convierte el Episode al formato estándar:
-    {"task_id": str, "messages": [{"role": "system"|"user"|"assistant", "content": str}, ...]}
+    {"task_id": str, "difficulty": str, "messages": [{"role": "system"|"user"|"assistant", "content": str}, ...]}
     """
+    if difficulty is None:
+        task = get_task(episode.task_id)
+        difficulty = task.difficulty if task is not None else "unknown"
     return {
         "task_id": episode.task_id,
+        "difficulty": difficulty,
         "messages": [
             {"role": t.get("role", "user"), "content": t.get("content", "")}
             for t in episode.turns
@@ -116,11 +141,14 @@ def main(argv: List[str] | None = None) -> None:
     # Guardar en outputs/sft.jsonl
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
+    diff_counts: Counter[str] = Counter()
     with open(out_path, "w", encoding="utf-8") as f:
         for ep in correct_episodes:
             record = to_chat_format(ep)
+            diff_counts[record["difficulty"]] += 1
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
+    print("Por dificultad:", dict(diff_counts))
     print(f"¡Dataset SFT exportado exitosamente en: {out_path}!")
 
 
