@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=baseline-test
+#SBATCH --comment="Linea base pass@8 en test, incluidas plantillas SQL no vistas, para medir la generalizacion antes del entrenamiento"
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=baseline-eval
+#SBATCH --comment="Linea base pass@8 en eval: punto de partida de Qwen2.5-Coder 1.5B y zona aprendible antes de SFT, DPO y RL"
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
