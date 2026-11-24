@@ -38,6 +38,9 @@ if [[ ! -f evaluation/run_baseline.py ]]; then
   exit 1
 fi
 
+# Instalación de usuario (sin root). Un módulo cargado después puede ir delante.
+export PATH="${HOME}/.local/bin:${PATH}"
+
 if ! type module >/dev/null 2>&1; then
   for _mod in /etc/profile.d/modules.sh /usr/share/Modules/init/bash /usr/share/lmod/lmod/init/bash; do
     if [[ -f "${_mod}" ]]; then
@@ -102,7 +105,7 @@ if ! nvidia-smi -L | grep -qi 'H100'; then
 fi
 
 if ! command -v ollama >/dev/null 2>&1; then
-  echo "No está 'ollama' en el PATH del nodo. Instálalo en el home o define OLLAMA_MODULE." >&2
+  echo "No está 'ollama' en el PATH del nodo. Instálalo en \$HOME/.local o define OLLAMA_MODULE." >&2
   exit 1
 fi
 if ! command -v curl >/dev/null 2>&1; then
