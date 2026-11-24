@@ -1,0 +1,3181 @@
+{
+  "config": {
+    "models": [
+      "qwen2.5-coder:1.5b-instruct-q4_K_M"
+    ],
+    "split": "eval",
+    "k": 8,
+    "out": "outputs/baseline_eval/baseline.json",
+    "backend": "ollama",
+    "traces_dir": "outputs/baseline_eval",
+    "per_level": null,
+    "limit": null,
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "max_tokens": 512,
+    "seed": 2026,
+    "max_tool_turns": null,
+    "host": "http://127.0.0.1:23290",
+    "num_gpu": -1,
+    "no_stop_after_sql": false,
+    "resume": true,
+    "summarize_only": false,
+    "n_tasks": 333,
+    "task_ids": [
+      "hosp_0005",
+      "hosp_0006",
+      "hosp_0022",
+      "hosp_0025",
+      "hosp_0041",
+      "hosp_0053",
+      "hosp_0061",
+      "hosp_0062",
+      "hosp_0072",
+      "hosp_0074",
+      "hosp_0086",
+      "hosp_0088",
+      "hosp_0090",
+      "hosp_0097",
+      "hosp_0102",
+      "hosp_0117",
+      "hosp_0125",
+      "hosp_0137",
+      "hosp_0140",
+      "hosp_0146",
+      "hosp_0153",
+      "hosp_0160",
+      "hosp_0168",
+      "hosp_0176",
+      "hosp_0207",
+      "hosp_0215",
+      "hosp_0216",
+      "hosp_0219",
+      "hosp_0232",
+      "hosp_0265",
+      "hosp_0280",
+      "hosp_0281",
+      "hosp_0287",
+      "hosp_0308",
+      "hosp_0323",
+      "hosp_0332",
+      "hosp_0339",
+      "hosp_0342",
+      "hosp_0347",
+      "hosp_0349",
+      "hosp_0351",
+      "hosp_0363",
+      "hosp_0374",
+      "hosp_0384",
+      "hosp_0402",
+      "hosp_0403",
+      "hosp_0407",
+      "hosp_0412",
+      "hosp_0415",
+      "hosp_0419",
+      "hosp_0420",
+      "hosp_0425",
+      "hosp_0427",
+      "hosp_0432",
+      "hosp_0435",
+      "hosp_0443",
+      "hosp_0445",
+      "hosp_0447",
+      "hosp_0449",
+      "hosp_0451",
+      "hosp_0453",
+      "hosp_0456",
+      "hosp_0469",
+      "hosp_0471",
+      "hosp_0479",
+      "hosp_0483",
+      "hosp_0488",
+      "hosp_0490",
+      "hosp_0495",
+      "hosp_0501",
+      "hosp_0505",
+      "hosp_0506",
+      "hosp_0512",
+      "hosp_0516",
+      "hosp_0527",
+      "hosp_0533",
+      "hosp_0534",
+      "hosp_0542",
+      "hosp_0545",
+      "hosp_0547",
+      "hosp_0549",
+      "hosp_0550",
+      "hosp_0558",
+      "hosp_0578",
+      "hosp_0582",
+      "hosp_0596",
+      "hosp_0607",
+      "hosp_0608",
+      "hosp_0611",
+      "hosp_0615",
+      "hosp_0618",
+      "hosp_0623",
+      "hosp_0627",
+      "hosp_0641",
+      "hosp_0644",
+      "hosp_0651",
+      "hosp_0652",
+      "hosp_0657",
+      "hosp_0660",
+      "hosp_0675",
+      "hosp_0676",
+      "hosp_0681",
+      "hosp_0691",
+      "hosp_0709",
+      "hosp_0711",
+      "hosp_0714",
+      "hosp_0723",
+      "hosp_0741",
+      "hosp_0744",
+      "hosp_0752",
+      "hosp_0753",
+      "hosp_0760",
+      "hosp_0762",
+      "hosp_0784",
+      "hosp_0787",
+      "hosp_0791",
+      "hosp_0794",
+      "hosp_0797",
+      "hosp_0800",
+      "hosp_0817",
+      "hosp_0836",
+      "hosp_0837",
+      "hosp_0840",
+      "hosp_0845",
+      "hosp_0847",
+      "hosp_0850",
+      "hosp_0854",
+      "hosp_0859",
+      "hosp_0862",
+      "hosp_0872",
+      "hosp_0892",
+      "hosp_0895",
+      "hosp_0906",
+      "hosp_0908",
+      "hosp_0912",
+      "hosp_0939",
+      "hosp_0941",
+      "hosp_0944",
+      "hosp_0951",
+      "hosp_0960",
+      "hosp_0964",
+      "hosp_0975",
+      "hosp_0983",
+      "hosp_0988",
+      "hosp_0991",
+      "hosp_0997",
+      "hosp_1007",
+      "hosp_1010",
+      "hosp_1015",
+      "hosp_1026",
+      "hosp_1028",
+      "hosp_1037",
+      "hosp_1047",
+      "hosp_1048",
+      "hosp_1054",
+      "hosp_1056",
+      "hosp_1057",
+      "hosp_1071",
+      "hosp_1076",
+      "hosp_1101",
+      "hosp_1107",
+      "hosp_1108",
+      "hosp_1109",
+      "hosp_1110",
+      "hosp_1133",
+      "hosp_1145",
+      "hosp_1162",
+      "hosp_1171",
+      "hosp_1173",
+      "hosp_1188",
+      "hosp_1189",
+      "hosp_1197",
+      "hosp_1207",
+      "hosp_1220",
+      "hosp_1233",
+      "hosp_1238",
+      "hosp_1248",
+      "hosp_1258",
+      "hosp_1263",
+      "hosp_1269",
+      "hosp_1272",
+      "hosp_1275",
+      "hosp_1281",
+      "hosp_1282",
+      "hosp_1288",
+      "hosp_1291",
+      "hosp_1294",
+      "hosp_1297",
+      "hosp_1301",
+      "hosp_1302",
+      "hosp_1313",
+      "hosp_1319",
+      "hosp_1326",
+      "hosp_1338",
+      "hosp_1343",
+      "hosp_1354",
+      "hosp_1370",
+      "hosp_1373",
+      "hosp_1381",
+      "hosp_1383",
+      "hosp_1392",
+      "hosp_1407",
+      "hosp_1409",
+      "hosp_1412",
+      "hosp_1439",
+      "hosp_1440",
+      "hosp_1441",
+      "hosp_1446",
+      "hosp_1451",
+      "hosp_1455",
+      "hosp_1464",
+      "hosp_1470",
+      "hosp_1472",
+      "hosp_1478",
+      "hosp_1484",
+      "hosp_1505",
+      "hosp_1518",
+      "hosp_1529",
+      "hosp_1555",
+      "hosp_1558",
+      "hosp_1581",
+      "hosp_1592",
+      "hosp_1593",
+      "hosp_1603",
+      "hosp_1606",
+      "hosp_1613",
+      "hosp_1624",
+      "hosp_1625",
+      "hosp_1629",
+      "hosp_1661",
+      "hosp_1662",
+      "hosp_1669",
+      "hosp_1670",
+      "hosp_1675",
+      "hosp_1689",
+      "hosp_1706",
+      "hosp_1721",
+      "hosp_1740",
+      "hosp_1757",
+      "hosp_1769",
+      "hosp_1770",
+      "hosp_1772",
+      "hosp_1777",
+      "hosp_1785",
+      "hosp_1790",
+      "hosp_1792",
+      "hosp_1805",
+      "hosp_1809",
+      "hosp_1815",
+      "hosp_1822",
+      "hosp_1847",
+      "hosp_1849",
+      "hosp_1850",
+      "hosp_1861",
+      "hosp_1867",
+      "hosp_1900",
+      "hosp_1905",
+      "hosp_1915",
+      "hosp_1926",
+      "hosp_1934",
+      "hosp_1936",
+      "hosp_1947",
+      "hosp_1952",
+      "hosp_1964",
+      "hosp_1968",
+      "hosp_1969",
+      "hosp_1973",
+      "hosp_1999",
+      "hosp_2000",
+      "hosp_2001",
+      "hosp_2016",
+      "hosp_2042",
+      "hosp_2063",
+      "hosp_2070",
+      "hosp_2074",
+      "hosp_2081",
+      "hosp_2089",
+      "hosp_2090",
+      "hosp_2111",
+      "hosp_2116",
+      "hosp_2118",
+      "hosp_2124",
+      "hosp_2125",
+      "hosp_2136",
+      "hosp_2138",
+      "hosp_2143",
+      "hosp_2152",
+      "hosp_2159",
+      "hosp_2161",
+      "hosp_2173",
+      "hosp_2177",
+      "hosp_2188",
+      "hosp_2196",
+      "hosp_2201",
+      "hosp_2202",
+      "hosp_2203",
+      "hosp_2208",
+      "hosp_2212",
+      "hosp_2234",
+      "hosp_2236",
+      "hosp_2240",
+      "hosp_2252",
+      "hosp_2257",
+      "hosp_2266",
+      "hosp_2277",
+      "hosp_2291",
+      "hosp_2304",
+      "hosp_2316",
+      "hosp_2317",
+      "hosp_2320",
+      "hosp_2325",
+      "hosp_2340",
+      "hosp_2347",
+      "hosp_2352",
+      "hosp_2356",
+      "hosp_2357",
+      "hosp_2382",
+      "hosp_2388",
+      "hosp_2402",
+      "hosp_2412",
+      "hosp_2422",
+      "hosp_2423",
+      "hosp_2433",
+      "hosp_2436",
+      "hosp_2437",
+      "hosp_2438",
+      "hosp_2446",
+      "hosp_2449",
+      "hosp_2482",
+      "hosp_2487",
+      "hosp_2489",
+      "hosp_2495",
+      "hosp_2496"
+    ]
+  },
+  "models": {
+    "qwen2.5-coder:1.5b-instruct-q4_K_M": {
+      "n_tasks": 333,
+      "samples_per_task": 8,
+      "k_values": [
+        1,
+        2,
+        4,
+        8
+      ],
+      "overall": {
+        "pass@1": 0.4538,
+        "pass@2": 0.5733,
+        "pass@4": 0.6641,
+        "pass@8": 0.7297,
+        "n_tasks": 333
+      },
+      "by_difficulty": {
+        "easy": {
+          "pass@1": 0.8186,
+          "pass@2": 0.9125,
+          "pass@4": 0.9563,
+          "pass@8": 0.9756,
+          "n_tasks": 82
+        },
+        "medium": {
+          "pass@1": 0.5222,
+          "pass@2": 0.6905,
+          "pass@4": 0.8183,
+          "pass@8": 0.9111,
+          "n_tasks": 90
+        },
+        "hard": {
+          "pass@1": 0.2967,
+          "pass@2": 0.4192,
+          "pass@4": 0.5144,
+          "pass@8": 0.5758,
+          "n_tasks": 99
+        },
+        "expert": {
+          "pass@1": 0.123,
+          "pass@2": 0.2005,
+          "pass@4": 0.2929,
+          "pass@8": 0.3871,
+          "n_tasks": 62
+        },
+        "all": {
+          "pass@1": 0.4538,
+          "pass@2": 0.5733,
+          "pass@4": 0.6641,
+          "pass@8": 0.7297,
+          "n_tasks": 333
+        }
+      },
+      "by_answer_type": {
+        "number": {
+          "pass@1": 0.5059,
+          "pass@2": 0.6252,
+          "pass@4": 0.7087,
+          "pass@8": 0.7647,
+          "n_tasks": 170
+        },
+        "table": {
+          "pass@1": 0.375,
+          "pass@2": 0.5114,
+          "pass@4": 0.6006,
+          "pass@8": 0.64,
+          "n_tasks": 25
+        },
+        "boolean": {
+          "pass@1": 0.566,
+          "pass@2": 0.6448,
+          "pass@4": 0.7044,
+          "pass@8": 0.75,
+          "n_tasks": 36
+        },
+        "list": {
+          "pass@1": 0.3643,
+          "pass@2": 0.5035,
+          "pass@4": 0.624,
+          "pass@8": 0.7317,
+          "n_tasks": 82
+        },
+        "text": {
+          "pass@1": 0.275,
+          "pass@2": 0.3661,
+          "pass@4": 0.4557,
+          "pass@8": 0.5,
+          "n_tasks": 20
+        },
+        "all": {
+          "pass@1": 0.4538,
+          "pass@2": 0.5733,
+          "pass@4": 0.6641,
+          "pass@8": 0.7297,
+          "n_tasks": 333
+        }
+      },
+      "by_block": {
+        "seen": {
+          "pass@1": 0.4538,
+          "pass@2": 0.5733,
+          "pass@4": 0.6641,
+          "pass@8": 0.7297,
+          "n_tasks": 333
+        },
+        "all": {
+          "pass@1": 0.4538,
+          "pass@2": 0.5733,
+          "pass@4": 0.6641,
+          "pass@8": 0.7297,
+          "n_tasks": 333
+        }
+      },
+      "calibration": {
+        "easy": {
+          "n_tasks": 82,
+          "never_solved": 0.0244,
+          "learnable": 0.4756,
+          "always_solved": 0.5
+        },
+        "medium": {
+          "n_tasks": 90,
+          "never_solved": 0.0889,
+          "learnable": 0.7889,
+          "always_solved": 0.1222
+        },
+        "hard": {
+          "n_tasks": 99,
+          "never_solved": 0.4242,
+          "learnable": 0.5556,
+          "always_solved": 0.0202
+        },
+        "expert": {
+          "n_tasks": 62,
+          "never_solved": 0.6129,
+          "learnable": 0.3871,
+          "always_solved": 0.0
+        },
+        "all": {
+          "n_tasks": 333,
+          "never_solved": 0.2703,
+          "learnable": 0.5676,
+          "always_solved": 0.1622
+        }
+      },
+      "tool_usage": {
+        "valid_format_rate": 0.8435,
+        "sql_emitted_rate": 0.997,
+        "executable_sql_rate": 0.4073,
+        "avg_turns": 2.9088,
+        "reward_rate": 0.4538
+      },
+      "per_task": [
+        {
+          "task_id": "hosp_0005",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0006",
+          "difficulty": "hard",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0022",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0025",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0041",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0053",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0061",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0062",
+          "difficulty": "expert",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_0072",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0074",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0086",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0088",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0090",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_0097",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0102",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0117",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0125",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0137",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0140",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0146",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0153",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0160",
+          "difficulty": "expert",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0168",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0176",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0207",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0215",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0216",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0219",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0232",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0265",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0280",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0281",
+          "difficulty": "hard",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_0287",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0308",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0323",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0332",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0339",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0342",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0347",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0349",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0351",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0363",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0374",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0384",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0402",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0403",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0407",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0412",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0415",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0419",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0420",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0425",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0427",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0432",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0435",
+          "difficulty": "hard",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0443",
+          "difficulty": "expert",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0445",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0447",
+          "difficulty": "expert",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0449",
+          "difficulty": "medium",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0451",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0453",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0456",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_0469",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0471",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0479",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0483",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0488",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0490",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0495",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0501",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0505",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0506",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0512",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0516",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0527",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0533",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0534",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0542",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0545",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_0547",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0549",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0550",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0558",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0578",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0582",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0596",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0607",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0608",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0611",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_0615",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0618",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0623",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0627",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0641",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0644",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0651",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0652",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0657",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0660",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0675",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0676",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0681",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0691",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0709",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0711",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0714",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0723",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0741",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0744",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0752",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0753",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0760",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0762",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0784",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0787",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0791",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0794",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0797",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0800",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0817",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0836",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0837",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0840",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_0845",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0847",
+          "difficulty": "expert",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0850",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0854",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0859",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0862",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0872",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0892",
+          "difficulty": "hard",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0895",
+          "difficulty": "hard",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0906",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0908",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_0912",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_0939",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0941",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_0944",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_0951",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0960",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_0964",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0975",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0983",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_0988",
+          "difficulty": "hard",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_0991",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_0997",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1007",
+          "difficulty": "hard",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1010",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1015",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1026",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1028",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1037",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_1047",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1048",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1054",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1056",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1057",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1071",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_1076",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1101",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1107",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1108",
+          "difficulty": "hard",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1109",
+          "difficulty": "expert",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1110",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1133",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1145",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1162",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1171",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1173",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1188",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1189",
+          "difficulty": "expert",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1197",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1207",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1220",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1233",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_1238",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1248",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1258",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1263",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1269",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1272",
+          "difficulty": "hard",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1275",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1281",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1282",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1288",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1291",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_1294",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1297",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1301",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_1302",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1313",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1319",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1326",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1338",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1343",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1354",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1370",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1373",
+          "difficulty": "medium",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_1381",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1383",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1392",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1407",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1409",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1412",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1439",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1440",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1441",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1446",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1451",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1455",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1464",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1470",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1472",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1478",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1484",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1505",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1518",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1529",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1555",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1558",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1581",
+          "difficulty": "hard",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1592",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1593",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1603",
+          "difficulty": "expert",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1606",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_1613",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1624",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1625",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_1629",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1661",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1662",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1669",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1670",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1675",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1689",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_1706",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1721",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1740",
+          "difficulty": "medium",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1757",
+          "difficulty": "expert",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1769",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1770",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_1772",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1777",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1785",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_1790",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1792",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1805",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_1809",
+          "difficulty": "hard",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1815",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1822",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_1847",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_1849",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1850",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1861",
+          "difficulty": "expert",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1867",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1900",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1905",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_1915",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1926",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_1934",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1936",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_1947",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_1952",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1964",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_1968",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_1969",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1973",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_1999",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2000",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2001",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_2016",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2042",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_2063",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2070",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_2074",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2081",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_2089",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_2090",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2111",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2116",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_2118",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2124",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_2125",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_2136",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_2138",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_2143",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2152",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_2159",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_2161",
+          "difficulty": "medium",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_2173",
+          "difficulty": "expert",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2177",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_2188",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_2196",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2201",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_2202",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2203",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_2208",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_2212",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_2234",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2236",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_2240",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_2252",
+          "difficulty": "hard",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_2257",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2266",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_2277",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_2291",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_2304",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_2316",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_2317",
+          "difficulty": "medium",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_2320",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_2325",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 7
+        },
+        {
+          "task_id": "hosp_2340",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_2347",
+          "difficulty": "easy",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        },
+        {
+          "task_id": "hosp_2352",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_2356",
+          "difficulty": "expert",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2357",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_2382",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_2388",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2402",
+          "difficulty": "hard",
+          "answer_type": "table",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_2412",
+          "difficulty": "hard",
+          "answer_type": "text",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_2422",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 6
+        },
+        {
+          "task_id": "hosp_2423",
+          "difficulty": "hard",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_2433",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2436",
+          "difficulty": "easy",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_2437",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 5
+        },
+        {
+          "task_id": "hosp_2438",
+          "difficulty": "expert",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 1
+        },
+        {
+          "task_id": "hosp_2446",
+          "difficulty": "expert",
+          "answer_type": "boolean",
+          "block": "seen",
+          "n": 8,
+          "c": 2
+        },
+        {
+          "task_id": "hosp_2449",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2482",
+          "difficulty": "medium",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_2487",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 0
+        },
+        {
+          "task_id": "hosp_2489",
+          "difficulty": "hard",
+          "answer_type": "number",
+          "block": "seen",
+          "n": 8,
+          "c": 3
+        },
+        {
+          "task_id": "hosp_2495",
+          "difficulty": "medium",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 4
+        },
+        {
+          "task_id": "hosp_2496",
+          "difficulty": "easy",
+          "answer_type": "list",
+          "block": "seen",
+          "n": 8,
+          "c": 8
+        }
+      ]
+    }
+  }
+}
