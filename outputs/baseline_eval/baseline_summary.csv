@@ -1,0 +1,14 @@
+model,grouping,group,pass@1,pass@2,pass@4,pass@8,n_tasks,calib_never_solved,calib_learnable,calib_always_solved
+qwen2.5-coder:1.5b-instruct-q4_K_M,difficulty,easy,0.8186,0.9125,0.9563,0.9756,82,0.0244,0.4756,0.5
+qwen2.5-coder:1.5b-instruct-q4_K_M,difficulty,medium,0.5222,0.6905,0.8183,0.9111,90,0.0889,0.7889,0.1222
+qwen2.5-coder:1.5b-instruct-q4_K_M,difficulty,hard,0.2967,0.4192,0.5144,0.5758,99,0.4242,0.5556,0.0202
+qwen2.5-coder:1.5b-instruct-q4_K_M,difficulty,expert,0.123,0.2005,0.2929,0.3871,62,0.6129,0.3871,0.0
+qwen2.5-coder:1.5b-instruct-q4_K_M,difficulty,all,0.4538,0.5733,0.6641,0.7297,333,0.2703,0.5676,0.1622
+qwen2.5-coder:1.5b-instruct-q4_K_M,answer_type,number,0.5059,0.6252,0.7087,0.7647,170,,,
+qwen2.5-coder:1.5b-instruct-q4_K_M,answer_type,table,0.375,0.5114,0.6006,0.64,25,,,
+qwen2.5-coder:1.5b-instruct-q4_K_M,answer_type,boolean,0.566,0.6448,0.7044,0.75,36,,,
+qwen2.5-coder:1.5b-instruct-q4_K_M,answer_type,list,0.3643,0.5035,0.624,0.7317,82,,,
+qwen2.5-coder:1.5b-instruct-q4_K_M,answer_type,text,0.275,0.3661,0.4557,0.5,20,,,
+qwen2.5-coder:1.5b-instruct-q4_K_M,answer_type,all,0.4538,0.5733,0.6641,0.7297,333,,,
+qwen2.5-coder:1.5b-instruct-q4_K_M,block,seen,0.4538,0.5733,0.6641,0.7297,333,,,
+qwen2.5-coder:1.5b-instruct-q4_K_M,block,all,0.4538,0.5733,0.6641,0.7297,333,,,

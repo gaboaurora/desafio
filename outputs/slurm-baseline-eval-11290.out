@@ -1,0 +1,23 @@
+Job 11290 · nodo peteroa · peteroa · 2026-11-24T09:52:44-03:00
+CUDA_VISIBLE_DEVICES=0 · OLLAMA_HOST=http://127.0.0.1:23290
+0, NVIDIA H100 80GB HBM3, 81559 MiB, 81072 MiB
+Iniciando ollama serve en http://127.0.0.1:23290 (log: outputs/baseline_eval/ollama.log)
+Precargando qwen2.5-coder:1.5b-instruct-q4_K_M en la GPU (num_gpu=-1)...
+NAME                                  ID              SIZE      PROCESSOR    CONTEXT    RUNNER      UNTIL             
+qwen2.5-coder:1.5b-instruct-q4_K_M    d7372fd82851    2.1 GB    100% GPU     32768      llamacpp    24 hours from now    
+Eval completo · modelo qwen2.5-coder:1.5b-instruct-q4_K_M · k=8 · salida outputs/baseline_eval
+333 tareas de eval · 8 muestras por tarea · backend ollama
+Offload a GPU: num_gpu=-1 (-1 = todas las capas que quepan en CUDA).
+Trazas de qwen2.5-coder:1.5b-instruct-q4_K_M en /home/grupo2-iagenerativa/desafio/outputs/baseline_eval/traces_qwen2.5-coder_1.5b-instruct-q4_K_M.jsonl
+
+qwen2.5-coder:1.5b-instruct-q4_K_M  (333 tareas × 8 muestras)
+  grupo        pass@1   pass@2   pass@4   pass@8   nunca    zona  siempre
+  easy          0.819    0.912    0.956    0.976    0.02    0.48     0.50
+  medium        0.522    0.691    0.818    0.911    0.09    0.79     0.12
+  hard          0.297    0.419    0.514    0.576    0.42    0.56     0.02
+  expert        0.123    0.201    0.293    0.387    0.61    0.39     0.00
+  all           0.454    0.573    0.664    0.730    0.27    0.57     0.16
+  seen          0.454    0.573    0.664    0.730
+  formato válido 0.84 · SQL emitido 1.00 · SQL ejecutable 0.41 · turnos 2.91
+
+Resumen en /home/grupo2-iagenerativa/desafio/outputs/baseline_eval/baseline.json y /home/grupo2-iagenerativa/desafio/outputs/baseline_eval/baseline_summary.csv

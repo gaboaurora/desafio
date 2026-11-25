@@ -1,0 +1,5 @@
+Job 11245 · nodo peteroa · peteroa · 2026-11-23T23:16:02-03:00
+CUDA_VISIBLE_DEVICES=0 · OLLAMA_HOST=http://127.0.0.1:23245
+0, NVIDIA H100 80GB HBM3, 81559 MiB, 81072 MiB
+Iniciando ollama serve en http://127.0.0.1:23245 (log: outputs/baseline_eval/ollama.log)
+Descargando qwen2.5-coder:1.5b-instruct-q4_K_M (si el nodo no tiene salida a internet, haz 'ollama pull' en el login)...

@@ -151,6 +151,16 @@ def test_episode_completion_excludes_prompt_but_keeps_observations():
     assert rb.episode_completion(ep) == "<sql>SELECT 1</sql>\n<result>1</result>\n<answer>1</answer>"
 
 
+def test_ollama_policy_requests_full_gpu_offload():
+    pytest.importorskip("ollama")
+    policy = rb.OllamaPolicy("dummy", num_gpu=-1, seed=0)
+    assert policy.options["num_gpu"] == -1
+    seeded = policy.with_seed(4)
+    assert seeded.options["num_gpu"] == -1
+    assert seeded.options["seed"] == 4
+    assert rb.OllamaPolicy("dummy", num_gpu=0).options["num_gpu"] == 0
+
+
 def test_k_values_never_exceed_samples():
     assert rb.k_values_for(8, 8) == [1, 2, 4, 8]
     assert rb.k_values_for(1, 8) == [1]

@@ -21,6 +21,7 @@ Qué reporta por modelo (outputs/baseline.json y outputs/baseline_summary.csv):
 Backends:
   - ollama : modelos abiertos servidos localmente (OLLAMA_HOST). Muestreo con temperatura > 0 y una
              semilla distinta por muestra, para que las k muestras de una tarea sean independientes.
+             Por defecto envía las capas a CUDA (`num_gpu=-1`: todas las que quepan en VRAM).
   - oracle : responde con el gold_sql y la respuesta esperada. No es un modelo: sirve para validar
              el harness de punta a punta (su pass@1 debe ser 1.0).
 
@@ -102,6 +103,7 @@ class OllamaPolicy:
         seed: Optional[int] = None,
         stop_after_sql: bool = True,
         retries: int = 3,
+        num_gpu: Optional[int] = -1,
     ) -> None:
         import ollama  # import diferido: el backend oracle y los tests no lo necesitan
 
@@ -113,6 +115,9 @@ class OllamaPolicy:
         self.options: Dict[str, Any] = {"temperature": temperature, "top_p": top_p, "num_predict": max_tokens}
         if seed is not None:
             self.options["seed"] = seed
+        # -1: Ollama envía a la GPU todas las capas que quepan (CUDA/Metal). 0 fuerza CPU.
+        if num_gpu is not None:
+            self.options["num_gpu"] = num_gpu
         if stop_after_sql:
             # Al cerrar </sql> el modelo debe esperar la observación del harness, no inventarla.
             self.options["stop"] = ["</sql>", "</SQL>"]
@@ -505,6 +510,12 @@ def main(argv: List[str] | None = None) -> None:
     parser.add_argument("--seed", type=int, default=int(os.getenv("RANDOM_SEED", "2026")))
     parser.add_argument("--max-tool-turns", type=int, default=None)
     parser.add_argument("--host", default=None, help="OLLAMA_HOST (por defecto el del .env)")
+    parser.add_argument(
+        "--num-gpu",
+        type=int,
+        default=int(os.getenv("OLLAMA_NUM_GPU", "-1")),
+        help="capas a enviar a la GPU (-1: todas las que quepan en CUDA, 0: solo CPU)",
+    )
     parser.add_argument("--no-stop-after-sql", action="store_true", help="no cortar la generación en </sql>")
     parser.add_argument("--resume", action="store_true", help="reutiliza episodios ya guardados en las trazas")
     parser.add_argument("--summarize-only", action="store_true", help="solo recalcula métricas desde las trazas")
@@ -517,6 +528,11 @@ def main(argv: List[str] | None = None) -> None:
     traces_dir.mkdir(parents=True, exist_ok=True)
     env = None if args.summarize_only else SQLEnvironment(max_tool_turns=args.max_tool_turns)
     print(f"{len(tasks)} tareas de {args.split} · {args.k} muestras por tarea · backend {args.backend}")
+    if args.backend == "ollama":
+        if args.num_gpu == 0:
+            print("Inferencia en CPU (num_gpu=0).")
+        else:
+            print(f"Offload a GPU: num_gpu={args.num_gpu} (-1 = todas las capas que quepan en CUDA).")
 
     report: Dict[str, Any] = {
         "config": {**vars(args), "n_tasks": len(tasks), "task_ids": [t.id for t in tasks]},
@@ -572,6 +588,7 @@ def _make_factory(args: argparse.Namespace, model: str) -> PolicyFactory:
         top_p=args.top_p,
         max_tokens=args.max_tokens,
         stop_after_sql=not args.no_stop_after_sql,
+        num_gpu=args.num_gpu,
     )
 
 
