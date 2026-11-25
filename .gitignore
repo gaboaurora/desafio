@@ -16,4 +16,4 @@ stages
 
 guide
 
-checkpoints/sft_lora
+checkpoints
