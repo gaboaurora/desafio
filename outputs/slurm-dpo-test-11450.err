@@ -1,0 +1,2 @@
+No existe ADAPTER_DIR='checkpoints/dpo_lora'.
+Copia GenAI/e2/checkpoints/dpo_lora (con su subcarpeta final_*) desde Drive a esa ruta.
