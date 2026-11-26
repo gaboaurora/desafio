@@ -1,0 +1,21 @@
+Job 11448 · nodo peteroa · peteroa · 2026-11-25T20:39:59-03:00
+CUDA_VISIBLE_DEVICES=0 · MODEL_NAME=sft_lora · SPLIT=test · K=8
+0, NVIDIA H100 80GB HBM3, 81559 MiB, 81072 MiB
+Evaluación HF · modelo sft_lora · base Qwen/Qwen2.5-Coder-1.5B-Instruct · adapter checkpoints/sft_lora · salida outputs/sft_lora_test
+602 tareas de test · 8 muestras por tarea · sft_lora (HF)
+Cargando adaptador LoRA desde /home/grupo2-iagenerativa/desafio/checkpoints/sft_lora/final_20261123_232018
+Trazas de sft_lora en /home/grupo2-iagenerativa/desafio/outputs/sft_lora_test/traces_sft_lora.jsonl
+
+sft_lora  (602 tareas × 8 muestras)
+  grupo        pass@1   pass@2   pass@4   pass@8   nunca    zona  siempre
+  easy          0.889    0.964    0.994    1.000    0.00    0.36     0.64
+  medium        0.739    0.801    0.834    0.858    0.14    0.32     0.54
+  hard          0.473    0.547    0.613    0.681    0.32    0.40     0.28
+  expert        0.311    0.408    0.485    0.546    0.45    0.47     0.08
+  all           0.664    0.738    0.784    0.817    0.18    0.37     0.45
+  heldout       0.598    0.692    0.751    0.781
+  seen          0.717    0.775    0.810    0.847
+  formato válido 0.94 · SQL emitido 1.00 · SQL ejecutable 0.66 · turnos 2.43
+  etapas: SQL ejecutable 0.89 → resultado = GT 0.67 → respuesta correcta 0.66
+
+Resumen en /home/grupo2-iagenerativa/desafio/outputs/sft_lora_test/sft_lora.json y /home/grupo2-iagenerativa/desafio/outputs/sft_lora_test/sft_lora_summary.csv
