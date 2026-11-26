@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=sft-test
 #SBATCH --comment="Evaluacion SFT LoRA pass@8 en test (602 tareas, incluidas plantillas heldout)"
+#SBATCH --partition=peteroa-default
+#SBATCH --account=curso-iagenerativa
+#SBATCH --qos=regular
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
