@@ -1,0 +1,21 @@
+Job 11451 · nodo peteroa · peteroa · 2026-11-25T21:14:15-03:00
+CUDA_VISIBLE_DEVICES=0 · MODEL_NAME=dpo_lora · SPLIT=test · K=8
+0, NVIDIA H100 80GB HBM3, 81559 MiB, 81072 MiB
+Evaluación DPO · modelo dpo_lora · base Qwen/Qwen2.5-Coder-1.5B-Instruct · adapter checkpoints/dpo_lora · salida outputs/dpo_lora_test
+602 tareas de test · 8 muestras por tarea · dpo_lora (HF)
+Cargando adaptador LoRA desde /home/grupo2-iagenerativa/desafio/checkpoints/dpo_lora/final_20261124_021003
+Trazas de dpo_lora en /home/grupo2-iagenerativa/desafio/outputs/dpo_lora_test/traces_dpo_lora.jsonl
+
+dpo_lora  (602 tareas × 8 muestras)
+  grupo        pass@1   pass@2   pass@4   pass@8   nunca    zona  siempre
+  easy          0.614    0.823    0.936    0.973    0.03    0.93     0.04
+  medium        0.396    0.585    0.740    0.838    0.16    0.83     0.01
+  hard          0.240    0.366    0.479    0.563    0.44    0.56     0.00
+  expert        0.147    0.254    0.391    0.535    0.47    0.53     0.00
+  all           0.392    0.561    0.692    0.774    0.23    0.76     0.01
+  heldout       0.363    0.551    0.698    0.781
+  seen          0.415    0.570    0.687    0.769
+  formato válido 0.67 · SQL emitido 0.74 · SQL ejecutable 0.57 · turnos 3.42
+  etapas: SQL ejecutable 0.63 → resultado = GT 0.40 → respuesta correcta 0.39
+
+Resumen en /home/grupo2-iagenerativa/desafio/outputs/dpo_lora_test/dpo_lora.json y /home/grupo2-iagenerativa/desafio/outputs/dpo_lora_test/dpo_lora_summary.csv
